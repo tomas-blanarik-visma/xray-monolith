@@ -77,7 +77,7 @@ void CALifeObjectRegistry::save(IWriter& memory_stream)
 		if ((*I).second->redundant())
 			continue;
 
-		if ((*I).second->ID_Parent != 0xffff)
+		if ((*I).second->ID_Parent != 0xffffffff)
 			continue;
 
 		save(memory_stream, (*I).second, object_count);

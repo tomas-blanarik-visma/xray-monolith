@@ -13,7 +13,7 @@ template <typename _registry_type>
 class CALifeRegistryWrapper
 {
 public:
-	IC CALifeRegistryWrapper() { holder_id = 0xffff; }
+	IC CALifeRegistryWrapper() { holder_id = 0xffffffff; }
 	virtual ~CALifeRegistryWrapper() { delete_data(local_registry); }
 
 	IC void init(u16 id) { holder_id = id; }
@@ -50,7 +50,7 @@ const typename _registry_type::_data* CALifeRegistryWrapper<_registry_type>::obj
 		return (&(*I).second);
 	}
 
-	VERIFY(0xffff != id);
+	VERIFY(0xffffffff != id);
 
 	typename _registry_type::_data* registy_container = ai().alife().registry((_registry_type*)NULL).object(id, true);
 	return registy_container;

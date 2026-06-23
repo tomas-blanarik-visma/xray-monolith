@@ -205,7 +205,7 @@ BOOL CPsyDogPhantom::net_Spawn(CSE_Abstract* dc)
 	CSE_ALifeMonsterBase* se_monster = smart_cast<CSE_ALifeMonsterBase*>(dc);
 	m_parent_id = se_monster->m_spec_object_id;
 	m_parent = 0;
-	VERIFY(m_parent_id != 0xffff);
+	VERIFY(m_parent_id != 0xffffffff);
 
 	try_to_register_to_parent();
 
@@ -311,7 +311,7 @@ void CPsyDogPhantom::net_Destroy()
 	{
 		m_parent->unregister_phantom(this);
 		m_parent = 0;
-		m_parent_id = 0xffff;
+		m_parent_id = 0xffffffff;
 	}
 
 	inherited::net_Destroy();
@@ -353,7 +353,7 @@ void CPsyDogPhantom::destroy_me()
 	{
 		m_parent->unregister_phantom(this);
 		m_parent = 0;
-		m_parent_id = 0xffff;
+		m_parent_id = 0xffffffff;
 	}
 
 	NET_Packet P;
@@ -363,7 +363,7 @@ void CPsyDogPhantom::destroy_me()
 
 void CPsyDogPhantom::destroy_from_parent()
 {
-	m_parent_id = 0xffff;
+	m_parent_id = 0xffffffff;
 
 	NET_Packet P;
 	u_EventGen(P, GE_DESTROY, ID());

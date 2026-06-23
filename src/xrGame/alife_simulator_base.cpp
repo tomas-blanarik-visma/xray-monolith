@@ -46,7 +46,7 @@ CALifeSimulatorBase::CALifeSimulatorBase(xrServer* server, LPCSTR section)
 	m_registry_container = 0;
 	m_upgrade_manager = 0;
 
-	random().seed(u32(CPU::QPC() & 0xffffffff));
+	random().seed(u32(CPU::QPC() & 0xffffffffffff));
 	m_can_register_objects = true;
 }
 
@@ -104,9 +104,9 @@ CSE_Abstract* CALifeSimulatorBase::spawn_item(LPCSTR section, const Fvector& pos
 	abstract->s_name = section;
 	//.	abstract->s_gameid			= u8(GAME_SINGLE);
 	abstract->s_RP = 0xff;
-	abstract->ID = server().PerformIDgen(0xffff);
+	abstract->ID = server().PerformIDgen(0xffffffff);
 	abstract->ID_Parent = parent_id;
-	abstract->ID_Phantom = 0xffff;
+	abstract->ID_Phantom = 0xffffffff;
 	abstract->o_Position = position;
 	abstract->m_wVersion = SPAWN_VERSION;
 
@@ -132,7 +132,7 @@ CSE_Abstract* CALifeSimulatorBase::spawn_item(LPCSTR section, const Fvector& pos
 
 	dynamic_object->m_tNodeID = level_vertex_id;
 	dynamic_object->m_tGraphID = game_vertex_id;
-	dynamic_object->m_tSpawnID = u16(-1);
+	dynamic_object->m_tSpawnID = u32(-1);
 
 	if (registration)
 		register_object(dynamic_object, true);
@@ -162,7 +162,7 @@ CSE_Abstract* CALifeSimulatorBase::create(CSE_ALifeGroupAbstract* tpALifeGroupAb
 	k->UPDATE_Read(tNetPacket);
 	k->s_name = S;
 	k->m_tSpawnID = j->m_tSpawnID;
-	k->ID = server().PerformIDgen(0xffff);
+	k->ID = server().PerformIDgen(0xffffffff);
 	k->m_bDirectControl = false;
 	k->m_bALifeControl = true;
 
@@ -206,7 +206,7 @@ void CALifeSimulatorBase::create(CSE_ALifeDynamicObject*& i, CSE_ALifeDynamicObj
 	if (!graph().actor() && smart_cast<CSE_ALifeCreatureActor*>(i))
 		i->ID = 0;
 	else
-		i->ID = server().PerformIDgen(0xffff);
+		i->ID = server().PerformIDgen(0xffffffff);
 
 	register_object(i, true);
 	i->m_bALifeControl = true;
@@ -250,15 +250,15 @@ void CALifeSimulatorBase::create(CSE_ALifeObject* object)
 	//	Msg							("Creating object from client spawn [%d][%d][%s][%s]",dynamic_object->ID,dynamic_object->ID_Parent,dynamic_object->name(),dynamic_object->name_replace());
 #endif
 
-	if (0xffff != dynamic_object->ID_Parent)
+	if (0xffffffff != dynamic_object->ID_Parent)
 	{
-		u16 id = dynamic_object->ID_Parent;
+		u32 id = dynamic_object->ID_Parent;
 		CSE_ALifeDynamicObject* parent = objects().object(id);
 		VERIFY(parent);
 		dynamic_object->m_tGraphID = parent->m_tGraphID;
 		dynamic_object->o_Position = parent->o_Position;
 		dynamic_object->m_tNodeID = parent->m_tNodeID;
-		dynamic_object->ID_Parent = 0xffff;
+		dynamic_object->ID_Parent = 0xffffffff;
 		register_object(dynamic_object, true);
 		dynamic_object->ID_Parent = id;
 	}

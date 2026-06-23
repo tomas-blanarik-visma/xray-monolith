@@ -143,7 +143,7 @@ void CSE_ALifeDynamicObject::detach(CSE_ALifeInventoryItem* tpALifeInventoryItem
 	if (!bALifeRequest)
 		return;
 
-	tpALifeInventoryItem->base()->ID_Parent = 0xffff;
+	tpALifeInventoryItem->base()->ID_Parent = u32(-1);
 
 	if (I)
 	{

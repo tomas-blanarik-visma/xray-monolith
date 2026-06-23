@@ -216,7 +216,7 @@ class type_motion3 : public type_motion
 	}
 };
 
-bool is_snipper(u16 weaponID)
+bool is_snipper(u32 weaponID)
 {
 	CObject* O = Level().Objects.net_Find(weaponID);
 	if (!O)

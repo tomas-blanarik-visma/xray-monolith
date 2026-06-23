@@ -115,9 +115,9 @@ public:
 
 	void OnArtefactOnBase(ClientID id_who);
 
-	virtual BOOL OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);
-	virtual void OnDetach(u16 eid_who, u16 eid_what);
-	virtual void OnCreate(u16 id_who);
+	virtual BOOL OnTouch(u32 eid_who, u16 eid_what, BOOL bForced = FALSE);
+	virtual void OnDetach(u32 eid_who, u16 eid_what);
+	virtual void OnCreate(u32 id_who);
 
 
 	virtual void Update();

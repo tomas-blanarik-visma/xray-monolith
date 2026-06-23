@@ -260,7 +260,7 @@ void CEntity::net_Destroy()
 	set_ready_to_save();
 }
 
-void CEntity::KillEntity(u16 whoID, BOOL bypass_actor_check /*AVO: added for actor_before_death callback*/)
+void CEntity::KillEntity(u32 whoID, BOOL bypass_actor_check /*AVO: added for actor_before_death callback*/)
 {
 	//AVO: allow scripts to process actor condition and prevent actor's death or kill him if desired.
 	//IMPORTANT: if you wish to kill actor you need to call db.actor:kill(level:object_by_id(whoID), true) in actor_before_death callback, to ensure all objects are properly destroyed
@@ -304,7 +304,7 @@ void CEntity::KillEntity(u16 whoID, BOOL bypass_actor_check /*AVO: added for act
 	{
 		NET_Packet P;
 		u_EventGen(P, GE_DIE, ID());
-		P.w_u16(u16(whoID));
+		P.w_u32(whoID);
 		P.w_u32(0);
 		if (OnServer())
 			u_EventSend(P, net_flags(TRUE, TRUE, FALSE, TRUE));
@@ -362,14 +362,14 @@ const u32 FORGET_KILLER_TIME = 180000;
 void CEntity::shedule_Update(u32 dt)
 {
 	inherited::shedule_Update(dt);
-	if (!getDestroy() && !g_Alive() && (m_killer_id != u16(-1)))
+	if (!getDestroy() && !g_Alive() && (m_killer_id != ALife::_OBJECT_ID(-1)))
 	{
 		if (Device.dwTimeGlobal > m_level_death_time + FORGET_KILLER_TIME)
 		{
-			m_killer_id = u16(-1);
+			m_killer_id = ALife::_OBJECT_ID(-1);
 			NET_Packet P;
 			u_EventGen(P, GE_ASSIGN_KILLER, ID());
-			P.w_u16(u16(-1));
+			P.w_u16(u32(-1));
 			if (IsGameTypeSingle()) u_EventSend(P);
 		}
 	}

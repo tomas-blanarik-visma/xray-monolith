@@ -1439,7 +1439,7 @@ CSE_ALifeCreatureActor::CSE_ALifeCreatureActor(LPCSTR caSection) : CSE_ALifeCrea
 	fRadiation = 0.f;
 	accel.set(0.f, 0.f, 0.f);
 	velocity.set(0.f, 0.f, 0.f);
-	m_holderID = u16(-1);
+	m_holderID = u32(-1);
 	mstate = 0;
 }
 
@@ -1497,7 +1497,7 @@ void CSE_ALifeCreatureActor::STATE_Read(NET_Packet& tNetPacket, u16 size)
 	}
 	if (m_wVersion > 88)
 	{
-		m_holderID = tNetPacket.r_u16();
+		m_holderID = tNetPacket.r_u32();
 	}
 };
 
@@ -1506,14 +1506,14 @@ void CSE_ALifeCreatureActor::STATE_Write(NET_Packet& tNetPacket)
 	inherited1::STATE_Write(tNetPacket);
 	inherited2::STATE_Write(tNetPacket);
 	inherited3::STATE_Write(tNetPacket);
-	tNetPacket.w_u16(m_holderID);
+	tNetPacket.w_u32(m_holderID);
 };
 
 void CSE_ALifeCreatureActor::load(NET_Packet& tNetPacket)
 {
 	inherited1::load(tNetPacket);
 	inherited3::load(tNetPacket);
-	m_holderID = tNetPacket.r_u16();
+	m_holderID = tNetPacket.r_u32();
 }
 
 BOOL CSE_ALifeCreatureActor::Net_Relevant()

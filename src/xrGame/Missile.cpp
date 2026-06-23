@@ -573,7 +573,7 @@ void CMissile::Throw()
 	{
 		NET_Packet P;
 		u_EventGen(P, GE_OWNERSHIP_REJECT, ID());
-		P.w_u16(u16(m_fake_missile->ID()));
+		P.w_u32(m_fake_missile->ID());
 		u_EventSend(P);
 	}
 }

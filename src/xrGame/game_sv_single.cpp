@@ -49,7 +49,7 @@ CSE_Abstract*		game_sv_Single::get_entity_from_eid		(u16 id)
 }
 /**/
 
-void game_sv_Single::OnCreate(u16 id_who)
+void game_sv_Single::OnCreate(u32 id_who)
 {
 	if (!ai().get_alife())
 		return;
@@ -65,7 +65,7 @@ void game_sv_Single::OnCreate(u16 id_who)
 
 	alife_object->m_bOnline = true;
 
-	if (alife_object->ID_Parent != 0xffff)
+	if (alife_object->ID_Parent != 0xffffffff)
 	{
 		CSE_ALifeDynamicObject* parent = ai().alife().objects().object(alife_object->ID_Parent, true);
 		if (parent)
@@ -89,7 +89,7 @@ void game_sv_Single::OnCreate(u16 id_who)
 		alife().create(alife_object);
 }
 
-BOOL game_sv_Single::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
+BOOL game_sv_Single::OnTouch(u32 eid_who, u16 eid_what, BOOL bForced)
 {
 	CSE_Abstract* e_who = get_entity_from_eid(eid_who);
 	VERIFY(e_who);
@@ -119,7 +119,7 @@ BOOL game_sv_Single::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
 	return TRUE;
 }
 
-void game_sv_Single::OnDetach(u16 eid_who, u16 eid_what)
+void game_sv_Single::OnDetach(u32 eid_who, u16 eid_what)
 {
 	if (ai().get_alife())
 	{
@@ -146,8 +146,8 @@ void game_sv_Single::OnDetach(u16 eid_who, u16 eid_what)
 		{
 			if (!ai().alife().objects().object(e_what->ID, true))
 			{
-				u16 id = l_tpALifeInventoryItem->base()->ID_Parent;
-				l_tpALifeInventoryItem->base()->ID_Parent = 0xffff;
+				u32 id = l_tpALifeInventoryItem->base()->ID_Parent;
+				l_tpALifeInventoryItem->base()->ID_Parent = 0xffffffff;
 
 				CSE_ALifeDynamicObject* dynamic_object = smart_cast<CSE_ALifeDynamicObject*>(e_what);
 				VERIFY(dynamic_object);

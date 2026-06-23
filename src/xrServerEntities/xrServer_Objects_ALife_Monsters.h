@@ -332,7 +332,7 @@ SERVER_ENTITY_DECLARE_BEGIN3(CSE_ALifeCreatureActor, CSE_ALifeCreatureAbstract, 
 	u8 weapon;
 	///////////////////////////////////////////
 	u16 m_u16NumItems;
-	u16 m_holderID;
+	u32 m_holderID;
 	//	DEF_DEQUE		(PH_STATES, SPHNetState); 
 	SPHNetState m_AliveState;
 	//	PH_STATES						m_DeadStates;

@@ -128,7 +128,7 @@ CScriptGameObject *get_object_by_name(LPCSTR caObjectName)
 #endif
 
 // demonized: add u16 id version of function to improve performance
-CScriptGameObject* get_object_by_id(u16 id)
+CScriptGameObject* get_object_by_id(u32 id)
 {
 	CGameObject* pGameObject = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
 	if (!pGameObject)
@@ -153,7 +153,7 @@ CScriptGameObject* get_object_by_id(const ::luabind::object& ob)
 		return nullptr;
 	}
 
-	u16 id = ::luabind::object_cast<u16>(ob);
+	u32 id = ::luabind::object_cast<u32>(ob);
 	return get_object_by_id(id);
 }
 
@@ -431,7 +431,7 @@ Fvector vertex_position(u32 level_vertex_id)
 	return (ai().level_graph().vertex_position(level_vertex_id));
 }
 
-void map_add_object_spot(u16 id, LPCSTR spot_type, LPCSTR text)
+void map_add_object_spot(u32 id, LPCSTR spot_type, LPCSTR text)
 {
 	CMapLocation* ml = Level().MapManager().AddMapLocation(spot_type, id);
 	if (xr_strlen(text))
@@ -440,7 +440,7 @@ void map_add_object_spot(u16 id, LPCSTR spot_type, LPCSTR text)
 	}
 }
 
-void map_add_object_spot_ser(u16 id, LPCSTR spot_type, LPCSTR text)
+void map_add_object_spot_ser(u32 id, LPCSTR spot_type, LPCSTR text)
 {
 	CMapLocation* ml = Level().MapManager().AddMapLocation(spot_type, id);
 	if (xr_strlen(text))
@@ -449,32 +449,32 @@ void map_add_object_spot_ser(u16 id, LPCSTR spot_type, LPCSTR text)
 	ml->SetSerializable(true);
 }
 
-void map_change_spot_hint(u16 id, LPCSTR spot_type, LPCSTR text)
+void map_change_spot_hint(u32 id, LPCSTR spot_type, LPCSTR text)
 {
 	CMapLocation* ml = Level().MapManager().GetMapLocation(spot_type, id);
 	if (!ml) return;
 	ml->SetHint(text);
 }
 
-void map_remove_object_spot(u16 id, LPCSTR spot_type)
+void map_remove_object_spot(u32 id, LPCSTR spot_type)
 {
 	Level().MapManager().RemoveMapLocation(spot_type, id);
 }
 
 // demonized: remove all map object spots by id
-void map_remove_all_object_spots(u16 id)
+void map_remove_all_object_spots(u32 id)
 {
 	Level().MapManager().RemoveAllMapLocationsById(id);
 }
 
-CUIStatic* map_get_spot_static(u16 id, LPCSTR spot_type)
+CUIStatic* map_get_spot_static(u32 id, LPCSTR spot_type)
 {
 	CMapLocation* ml = Level().MapManager().GetMapLocation(spot_type, id);
 	if (!ml) return nullptr;
 	CUIStatic* map_spot_static = ml->LevelMapSpotNC();
 	return map_spot_static;
 }
-CUIStatic* map_get_minimap_spot_static(u16 id, LPCSTR spot_type)
+CUIStatic* map_get_minimap_spot_static(u32 id, LPCSTR spot_type)
 {
 	CMapLocation* ml = Level().MapManager().GetMapLocation(spot_type, id);
 	if (!ml) return nullptr;
@@ -482,7 +482,7 @@ CUIStatic* map_get_minimap_spot_static(u16 id, LPCSTR spot_type)
 	return map_spot_static;
 }
 
-::luabind::object map_get_object_spots_by_id(u16 id)
+::luabind::object map_get_object_spots_by_id(u32 id)
 {
 	::luabind::object table = ::luabind::newtable(ai().script_engine().lua());
 
@@ -502,7 +502,7 @@ CUIStatic* map_get_minimap_spot_static(u16 id, LPCSTR spot_type)
 	return table;
 }
 
-u16 map_has_object_spot(u16 id, LPCSTR spot_type)
+u16 map_has_object_spot(u32 id, LPCSTR spot_type)
 {
 	return Level().MapManager().HasMapLocation(spot_type, id);
 }
@@ -1774,7 +1774,7 @@ const Fvector2 world2ui(Fvector pos, bool hud = false, bool allow_offscreen = fa
 
 // demonized: unproject ui coordinates (ie mouse cursor coordinates) to world coordinates
 // returns position and underlying object id if found. If there is no object, obj_id will be 65535
-void ui2world(Fvector2 pos, bool allow_offscreen, Fvector& res, u16& obj_id)
+void ui2world(Fvector2 pos, bool allow_offscreen, Fvector& res, u32& obj_id)
 {
 	res.set(0, 0, 0);
 	if (!allow_offscreen && (pos.x < 0 || pos.x > UI_BASE_WIDTH || pos.y < 0 || pos.y > UI_BASE_HEIGHT)) {
@@ -1845,7 +1845,7 @@ void ui2world(Fvector2 pos, bool allow_offscreen, Fvector& res, u16& obj_id)
 	start.mad(dir, R_VIEWPORT_NEAR);
 	float range = g_pGamePersistent->Environment().CurrentEnv->far_plane;
 
-	obj_id = 65535;
+	obj_id = u32(-1);
 	if (Level().ObjectSpace.RayPick(start, dir, range, collide::rqtBoth, R, ignore))
 	{
 		res.mad(start, dir, R.range);
@@ -1859,22 +1859,22 @@ void ui2world(Fvector2 pos, bool allow_offscreen, Fvector& res, u16& obj_id)
 	}
 }
 
-void ui2world(Fvector2 pos, Fvector& res, u16& obj_id)
+void ui2world(Fvector2 pos, Fvector& res, u32& obj_id)
 {
 	ui2world(pos, false, res, obj_id);
 }
 
-void ui2world(Fvector& pos, Fvector& res, u16& obj_id)
+void ui2world(Fvector& pos, Fvector& res, u32& obj_id)
 {
 	ui2world(Fvector2().set(pos.x, pos.y), res, obj_id);
 }
 
-void ui2world_offscreen(Fvector2 pos, Fvector& res, u16& obj_id)
+void ui2world_offscreen(Fvector2 pos, Fvector& res, u32& obj_id)
 {
 	ui2world(pos, true, res, obj_id);
 }
 
-void ui2world_offscreen(Fvector& pos, Fvector& res, u16& obj_id)
+void ui2world_offscreen(Fvector& pos, Fvector& res, u32& obj_id)
 {
 	ui2world_offscreen(Fvector2().set(pos.x, pos.y), res, obj_id);
 }
@@ -1896,7 +1896,7 @@ void g_send(NET_Packet& P, bool bReliable = 0, bool bSequential = 1, bool bHighP
 }
 
 //can spawn entities like bolts, phantoms, ammo, etc. which normally crash when using alife():create()
-void spawn_section(LPCSTR sSection, Fvector3 vPosition, u32 LevelVertexID, u16 ParentID, bool bReturnItem = false)
+void spawn_section(LPCSTR sSection, Fvector3 vPosition, u32 LevelVertexID, u32 ParentID, bool bReturnItem = false)
 {
 	Level().spawn_item(sSection, vPosition, LevelVertexID, ParentID, bReturnItem);
 }
@@ -2480,8 +2480,8 @@ void CLevel::script_register(lua_State* L)
 #endif
 			//Alundaio: END
 			// obsolete\deprecated
-			// demonized: add u16 override for better performance
-			def("object_by_id", ((CScriptGameObject * (*)(u16)) & get_object_by_id)),
+			// demonized: add u32 override for better performance
+			def("object_by_id", ((CScriptGameObject * (*)(u32)) & get_object_by_id)),
 			def("object_by_id", ((CScriptGameObject* (*)()) & get_object_by_id)),
 			def("object_by_id", ((CScriptGameObject* (*)(const ::luabind::object&)) & get_object_by_id)),
 #ifdef DEBUG
@@ -2799,10 +2799,10 @@ void CLevel::script_register(lua_State* L)
 		def("get_visual_userdata", GetVisualUserdata),
 		def("world2ui", world2ui),
 		def("world2ui_with_depth", world2ui_with_depth),
-		def("ui2world", (void (*)(Fvector2, Fvector&, u16&))&ui2world, pure_out_value<2>() + pure_out_value<3>()),
-		def("ui2world", (void (*)(Fvector&, Fvector&, u16&))&ui2world, pure_out_value<2>() + pure_out_value<3>()),
-		def("ui2world_offscreen", (void (*)(Fvector2, Fvector&, u16&))& ui2world_offscreen, pure_out_value<2>() + pure_out_value<3>()),
-		def("ui2world_offscreen", (void (*)(Fvector&, Fvector&, u16&))& ui2world_offscreen, pure_out_value<2>() + pure_out_value<3>()),
+		def("ui2world", (void (*)(Fvector2, Fvector&, u32&))&ui2world, pure_out_value<2>() + pure_out_value<3>()),
+		def("ui2world", (void (*)(Fvector&, Fvector&, u32&))&ui2world, pure_out_value<2>() + pure_out_value<3>()),
+		def("ui2world_offscreen", (void (*)(Fvector2, Fvector&, u32&))& ui2world_offscreen, pure_out_value<2>() + pure_out_value<3>()),
+		def("ui2world_offscreen", (void (*)(Fvector&, Fvector&, u32&))& ui2world_offscreen, pure_out_value<2>() + pure_out_value<3>()),
 		
 		// demonized: adjust game news time
 		def("change_game_news_show_time", &change_game_news_show_time),

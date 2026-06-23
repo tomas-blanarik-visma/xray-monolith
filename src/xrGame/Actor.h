@@ -288,7 +288,7 @@ public:
 	virtual bool can_attach(const CInventoryItem* inventory_item) const;
 protected:
 	CHolderCustom* m_holder;
-	u16 m_holderID;
+	u32 m_holderID;
 	bool use_Holder(CHolderCustom* holder);
 	void ActorUse();
 

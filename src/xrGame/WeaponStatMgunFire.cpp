@@ -776,7 +776,7 @@ u16 CWeaponStatMgun::AddCartridge(u16 cnt)
 
 void CWeaponStatMgun::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
 {
-	if (ParentID >= 0xffff)
+	if (ParentID == 0xffffffff)
 		return;
 	if (OnClient())
 		return;
@@ -801,9 +801,9 @@ void CWeaponStatMgun::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
 		D->s_name = ammoSect;
 		D->set_name_replace("");
 		D->s_RP = 0xff;
-		D->ID = 0xffff;
-		D->ID_Parent = (u16)ParentID;
-		D->ID_Phantom = 0xffff;
+		D->ID = u32(-1);
+		D->ID_Parent = ParentID;
+		D->ID_Phantom = u32(-1);
 		D->s_flags.assign(M_SPAWN_OBJECT_LOCAL);
 		D->RespawnTime = 0;
 		l_pA->m_tNodeID = g_dedicated_server ? u32(-1) : ai_location().level_vertex_id();

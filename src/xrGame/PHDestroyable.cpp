@@ -62,7 +62,7 @@ void CPHDestroyable::GenSpawnReplace(u16 ref_id, LPCSTR section, shared_str visu
 
 	// Send
 	D->s_name = section; //*cNameSect()
-	D->ID_Parent = u16(-1);
+	D->ID_Parent = u32(-1);
 	InitServerObject(D);
 	if (OnServer())
 	{
@@ -91,9 +91,9 @@ void CPHDestroyable::InitServerObject(CSE_Abstract* D)
 	D->set_name_replace("");
 	//.	D->s_gameid			=	u8(GameID());
 	D->s_RP = 0xff;
-	D->ID = 0xffff;
+	D->ID = u32(-1);
 
-	D->ID_Phantom = 0xffff;
+	D->ID_Phantom = u32(-1);
 	D->o_Position = obj->Position();
 	if (ai().get_alife())
 		l_tpALifeDynamicObject->m_tGraphID = ai().game_graph().current_level_vertex();

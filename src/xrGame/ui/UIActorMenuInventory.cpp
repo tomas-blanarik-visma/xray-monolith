@@ -83,7 +83,7 @@ void CUIActorMenu::SendEvent_Item2Slot(PIItem pItem, u16 recipient, u16 slot_id)
 
 	NET_Packet P;
 	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM2SLOT, pItem->object().H_Parent()->ID());
-	P.w_u16(pItem->object().ID());
+	P.w_u32(pItem->object().ID());
 	P.w_u16(slot_id);
 	CGameObject::u_EventSend(P);
 
@@ -97,7 +97,7 @@ void CUIActorMenu::SendEvent_Item2Belt(PIItem pItem, u16 recipient)
 
 	NET_Packet P;
 	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM2BELT, pItem->object().H_Parent()->ID());
-	P.w_u16(pItem->object().ID());
+	P.w_u32(pItem->object().ID());
 	CGameObject::u_EventSend(P);
 
 	PlaySnd(eItemToBelt);
@@ -110,7 +110,7 @@ void CUIActorMenu::SendEvent_Item2Ruck(PIItem pItem, u16 recipient)
 
 	NET_Packet P;
 	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM2RUCK, pItem->object().H_Parent()->ID());
-	P.w_u16(pItem->object().ID());
+	P.w_u32(pItem->object().ID());
 	CGameObject::u_EventSend(P);
 
 	PlaySnd(eItemToRuck);
@@ -123,7 +123,7 @@ void CUIActorMenu::SendEvent_Item_Eat(PIItem pItem, u16 recipient)
 
 	NET_Packet P;
 	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM_EAT, recipient);
-	P.w_u16(pItem->object().ID());
+	P.w_u32(pItem->object().ID());
 	CGameObject::u_EventSend(P);
 };
 
@@ -135,7 +135,7 @@ void CUIActorMenu::SendEvent_Item_Drop(PIItem pItem, u16 recipient)
 	//pItem->SetDropManual			(TRUE);
 	NET_Packet P;
 	pItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pItem->parent_id());
-	P.w_u16(pItem->object().ID());
+	P.w_u32(pItem->object().ID());
 	pItem->object().u_EventSend(P);
 	PlaySnd(eDropItem);
 }
@@ -401,7 +401,7 @@ void CUIActorMenu::AttachAddon(PIItem item_to_upgrade)
 	{
 		NET_Packet P;
 		CGameObject::u_EventGen(P, GE_ADDON_ATTACH, item_to_upgrade->object().ID());
-		P.w_u16(CurrentIItem()->object().ID());
+		P.w_u32(CurrentIItem()->object().ID());
 		CGameObject::u_EventSend(P);
 	};
 

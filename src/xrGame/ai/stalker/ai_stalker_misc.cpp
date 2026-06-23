@@ -47,7 +47,7 @@ bool CAI_Stalker::useful(const CItemManager* manager, const CGameObject* object)
 			xr_new<CDangerObjectLocation>(object, Device.dwTimeGlobal, DANGER_INFINITE_INTERVAL,
 			                              DANGER_EXPLOSIVE_DISTANCE));
 
-	if (explosive && (explosive->CurrentParentID() != 0xffff))
+	if (explosive && (explosive->CurrentParentID() != 0xffffffff))
 	{
 		agent_manager().explosive().register_explosive(explosive, object);
 		CEntityAlive* entity_alive = smart_cast<CEntityAlive*>(Level().Objects.net_Find(explosive->CurrentParentID()));

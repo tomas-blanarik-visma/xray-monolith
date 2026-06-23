@@ -39,9 +39,9 @@ void CRocketLauncher::SpawnRocket(const shared_str& rocket_section, CGameObject*
 
 	//.	D->s_gameid			=	u8(GameID());
 	D->s_RP = 0xff;
-	D->ID = 0xffff;
+	D->ID = u32(-1);
 	D->ID_Parent = parent_rocket_launcher->ID();
-	D->ID_Phantom = 0xffff;
+	D->ID_Phantom = u32(-1);
 	D->s_flags.assign(M_SPAWN_OBJECT_LOCAL);
 	D->RespawnTime = 0;
 

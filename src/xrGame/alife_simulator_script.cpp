@@ -40,7 +40,7 @@ CALifeSimulator* alife()
 CSE_ALifeDynamicObject* alife_object(const CALifeSimulator* self, ALife::_OBJECT_ID object_id)
 {
 	VERIFY(self);
-	if (object_id == 0xffff)
+	if (object_id == 0xffffffff)
 	{
 		Msg("alife():object(id) ! invalid id specified");
 		return (0);
@@ -51,7 +51,7 @@ CSE_ALifeDynamicObject* alife_object(const CALifeSimulator* self, ALife::_OBJECT
 bool valid_object_id(const CALifeSimulator* self, ALife::_OBJECT_ID object_id)
 {
 	VERIFY(self);
-	return (object_id != 0xffff);
+	return (object_id != 0xffffffff);
 }
 
 #ifdef DEBUG
@@ -197,7 +197,7 @@ CSE_Abstract* CALifeSimulator__spawn_item2(CALifeSimulator* self, LPCSTR section
 	F_entity_Destroy(item);
 
 	ClientID clientID;
-	clientID.set(0xffff);
+	clientID.set(0xffffffff);
 
 	u16 dummy;
 	packet.r_begin(dummy);
@@ -272,7 +272,7 @@ CSE_Abstract* CALifeSimulator__spawn_ammo(CALifeSimulator* self, LPCSTR section,
 	F_entity_Destroy(item);
 
 	ClientID clientID;
-	clientID.set(0xffff);
+	clientID.set(0xffffffff);
 
 	u16 dummy;
 	packet.r_begin(dummy);
@@ -405,7 +405,7 @@ CSE_Abstract* reprocess_spawn(CALifeSimulator* self, CSE_Abstract* object)
 	F_entity_Destroy(object);
 
 	ClientID clientID;
-	clientID.set(0xffff);
+	clientID.set(0xffffffff);
 
 	u16 dummy;
 	packet.r_begin(dummy);
@@ -588,7 +588,7 @@ ALife::_OBJECT_ID alife_object_count(const CALifeSimulator* self)
 	return result;
 }
 
-xr_vector<u16>& get_children(const CALifeSimulator *self, CSE_Abstract *object)
+xr_vector<u32>& get_children(const CALifeSimulator *self, CSE_Abstract *object)
 {
 	VERIFY(self);
 	return object->children;

@@ -74,7 +74,7 @@ void CALifeSimulatorBase::unregister_object(CSE_ALifeDynamicObject* object, bool
 		graph().remove(object, object->m_tGraphID);
 		scheduled().remove(object);
 	}
-	else if (object->ID_Parent == 0xffff)
+	else if (object->ID_Parent == u32(-1))
 	{
 		//			if (object->used_ai_locations())
 		graph().level().remove(object, !object->used_ai_locations());
@@ -93,7 +93,7 @@ void CALifeSimulatorBase::on_death(CSE_Abstract* killed, CSE_Abstract* killer)
 	if (!member)
 		return;
 
-	if (member->m_group_id == 0xffff)
+	if (member->m_group_id == 0xffffffff)
 		return;
 
 	groups().object(member->m_group_id).notify_on_member_death(member);

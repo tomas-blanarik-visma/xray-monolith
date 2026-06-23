@@ -37,7 +37,7 @@ private:
 		void SetArtefactRPoint(const RPoint& rpoint);
 		void OnPlayerAttachArtefact(CSE_ActorMP* newArtefactOwner);
 		void OnPlayerDetachArtefact(CSE_ActorMP* oldArtefactOwner);
-		void OnPlayerActivateArtefact(u16 eid_who);
+		void OnPlayerActivateArtefact(u32 eid_who);
 		bool IsArtefactActivated();
 		void DeactivateArtefact();
 		CSE_ActorMP* GetArtefactOwner() const;
@@ -243,9 +243,9 @@ public:
 	virtual void OnRoundEnd();
 
 	virtual BOOL OnPreCreate(CSE_Abstract* E);
-	virtual void OnCreate(u16 eid_who);
-	virtual void OnPostCreate(u16 id_who);
-	virtual void OnDestroyObject(u16 eid_who);
+	virtual void OnCreate(u32 eid_who);
+	virtual void OnPostCreate(u32 id_who);
+	virtual void OnDestroyObject(u32 eid_who);
 
 	virtual void Update();
 
@@ -261,9 +261,9 @@ public:
 	virtual void OnPlayerHitPlayer(u16 id_hitter, u16 id_hitted, NET_Packet& P);
 	virtual void OnPlayerHitPlayer_Case(game_PlayerState* ps_hitter, game_PlayerState* ps_hitted, SHit* pHitS);
 
-	virtual BOOL OnTouch(u16 eid_who, u16 eid_target, BOOL bForced = FALSE); // TRUE=allow ownership, FALSE=denied
-	virtual void OnDetach(u16 eid_who, u16 eid_target);
-	virtual BOOL OnActivate(u16 eid_who, u16 eid_target);
+	virtual BOOL OnTouch(u32 eid_who, u16 eid_target, BOOL bForced = FALSE); // TRUE=allow ownership, FALSE=denied
+	virtual void OnDetach(u32 eid_who, u16 eid_target);
+	virtual BOOL OnActivate(u32 eid_who, u16 eid_target);
 	virtual void OnEvent(NET_Packet& tNetPacket, u16 type, u32 time, ClientID sender);
 	virtual void RespawnPlayer(ClientID id_who, bool NoSpectator);
 	virtual void OnPlayerBuySpawn(ClientID sender);

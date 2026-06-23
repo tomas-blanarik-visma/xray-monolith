@@ -80,7 +80,7 @@ void game_sv_CaptureTheArtefact::MyTeam::OnPlayerDetachArtefact(
 	freeArtefactTimeStart = Level().timeServer();
 }
 
-void game_sv_CaptureTheArtefact::MyTeam::OnPlayerActivateArtefact(u16 eid_who)
+void game_sv_CaptureTheArtefact::MyTeam::OnPlayerActivateArtefact(u32 eid_who)
 {
 	activationArtefactTimeStart = Level().timeServer();
 	artefactActivated = true;

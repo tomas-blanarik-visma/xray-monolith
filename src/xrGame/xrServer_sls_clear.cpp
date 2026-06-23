@@ -9,7 +9,7 @@
 void xrServer::Perform_destroy(CSE_Abstract* object, u32 mode)
 {
 	R_ASSERT(object);
-	if (object->ID_Parent != 0xffff)
+	if (object->ID_Parent != 0xffffffff)
 	{
 		// LPCSTR name = object->name();
 		// if (name)
@@ -18,7 +18,7 @@ void xrServer::Perform_destroy(CSE_Abstract* object, u32 mode)
 		if (parent)
 			Perform_reject(object, parent, 2 * NET_Latency);
 	}
-	R_ASSERT(object->ID_Parent == 0xffff);
+	R_ASSERT(object->ID_Parent == 0xffffffff);
 
 #ifdef DEBUG
 #	ifdef SLOW_VERIFY_ENTITIES
@@ -76,7 +76,7 @@ void xrServer::SLS_Clear()
 		xrS_entities::const_iterator E = entities.end();
 		for (; I != E; ++I)
 		{
-			if ((*I).second->ID_Parent != 0xffff)
+			if ((*I).second->ID_Parent != 0xffffffff)
 				continue;
 			found = true;
 			Perform_destroy((*I).second, mode);

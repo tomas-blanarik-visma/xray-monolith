@@ -637,7 +637,7 @@ BOOL game_sv_TeamDeathmatch::OnTouchItem(CSE_ActorMP* actor, CSE_Abstract* item)
 	VERIFY(actor);
 	VERIFY(item);
 
-	if ((item->m_tClassID == CLSID_OBJECT_PLAYERS_BAG) && (item->ID_Parent == 0xffff))
+	if ((item->m_tClassID == CLSID_OBJECT_PLAYERS_BAG) && (item->ID_Parent == 0xffffffff))
 	{
 		//-------------------------------
 		//move all items from rukzak to player
@@ -699,7 +699,7 @@ void game_sv_TeamDeathmatch::OnDetachItem(CSE_ActorMP* actor, CSE_Abstract* item
 	if (item->m_tClassID == CLSID_OBJECT_PLAYERS_BAG)
 	{
 		//move all items from player to rukzak
-		xr_vector<u16>::const_iterator it_e = actor->children.end();
+		xr_vector<u32>::const_iterator it_e = actor->children.end();
 
 		xr_vector<CSE_Abstract*> to_transfer;
 		xr_vector<CSE_Abstract*> to_destroy;
@@ -707,7 +707,7 @@ void game_sv_TeamDeathmatch::OnDetachItem(CSE_ActorMP* actor, CSE_Abstract* item
 		// may be there is a sense to move next invokation into the ProcessDeath method...
 		FillDeathActorRejectItems(actor, to_reject);
 
-		for (xr_vector<u16>::const_iterator it = actor->children.begin();
+		for (xr_vector<u32>::const_iterator it = actor->children.begin();
 		     it != it_e; ++it)
 		{
 			u16 ItemID = *it;
@@ -761,7 +761,7 @@ void game_sv_TeamDeathmatch::OnDetachItem(CSE_ActorMP* actor, CSE_Abstract* item
 }
 
 
-BOOL game_sv_TeamDeathmatch::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
+BOOL game_sv_TeamDeathmatch::OnTouch(u32 eid_who, u16 eid_what, BOOL bForced)
 {
 	CSE_ActorMP* e_who = smart_cast<CSE_ActorMP*>(m_server->ID_to_entity(eid_who));
 	if (!e_who)
@@ -774,7 +774,7 @@ BOOL game_sv_TeamDeathmatch::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
 	return OnTouchItem(e_who, e_entity);
 }
 
-void game_sv_TeamDeathmatch::OnDetach(u16 eid_who, u16 eid_what)
+void game_sv_TeamDeathmatch::OnDetach(u32 eid_who, u16 eid_what)
 {
 	CSE_ActorMP* e_who = smart_cast<CSE_ActorMP*>(m_server->ID_to_entity(eid_who));
 	if (!e_who)

@@ -201,8 +201,9 @@ CObject::CObject() :
 	dwFrame_AsCrow(u32(-1))
 {
 	// Transform
+	Props.net_ID = 0;
 	Props.storage = 0;
-	setID((u16)-1);
+	setID(u32(-1));
 
 	Parent = NULL;
 

@@ -46,10 +46,10 @@ public:
 	virtual void OnEvent(NET_Packet& P, u16 type); //{inherited::OnEvent( P, type);}
 	virtual void OnAfterExplosion();
 	virtual void OnBeforeExplosion();
-	virtual void SetCurrentParentID(u16 parent_id) { m_iCurrentParentID = parent_id; }
-	IC u16 CurrentParentID() const { return m_iCurrentParentID; }
+	virtual void SetCurrentParentID(u32 parent_id) { m_iCurrentParentID = parent_id; }
+	IC u32 CurrentParentID() const { return m_iCurrentParentID; }
 
-	virtual void SetInitiator(u16 id) { SetCurrentParentID(id); }
+	virtual void SetInitiator(u32 id) { SetCurrentParentID(id); }
 	virtual u16 Initiator();
 
 	virtual void UpdateExplosionPos()
@@ -89,7 +89,7 @@ protected:
 
 	CWalmarkManager m_wallmark_manager;
 	//ID персонажа который иницировал действие
-	u16 m_iCurrentParentID;
+	u32 m_iCurrentParentID;
 
 	//bool						m_bReadyToExplode;
 	Fvector m_vExplodePos;

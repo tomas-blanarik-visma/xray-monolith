@@ -917,7 +917,7 @@ void game_sv_mp::SpawnWeapon4Actor(u16 actorId, LPCSTR N, u8 Addons, game_Player
 	SpawnAmmoDifference(actorId, ammo_diff);
 };
 
-void game_sv_mp::OnDestroyObject(u16 eid_who)
+void game_sv_mp::OnDestroyObject(u32 eid_who)
 {
 	CORPSE_LIST_it it = std::find(m_CorpseList.begin(), m_CorpseList.end(), eid_who);
 	if (it != m_CorpseList.end())
@@ -1386,7 +1386,7 @@ void game_sv_mp::SetPlayersDefItems(game_PlayerState* ps)
 			if (m_strWeaponsData->GetItemIdx(NewItemStr) == u32(-1)) continue;
 
 			//			*pItemID = pWpnS->SlotItem_ID;
-			*pItemID = u16(m_strWeaponsData->GetItemIdx(NewItemStr) & 0xffff);
+			*pItemID = u16(m_strWeaponsData->GetItemIdx(NewItemStr) & 0xffffffff);
 		}
 	}
 	//---------------------------------------------------
@@ -1399,18 +1399,18 @@ void game_sv_mp::SetPlayersDefItems(game_PlayerState* ps)
 
 		shared_str WeaponName = m_strWeaponsData->GetItemName((*pItemID) & 0x00FF);
 		if (!xr_strcmp(*WeaponName, "mp_wpn_knife")) continue;
-		u16 AmmoID = u16(-1);
+		u16 AmmoID = u32(-1);
 		if (pSettings->line_exist(WeaponName, "ammo_class"))
 		{
 			string1024 wpnAmmos, BaseAmmoName;
 			xr_strcpy(wpnAmmos, pSettings->r_string(WeaponName, "ammo_class"));
 			_GetItem(wpnAmmos, 0, BaseAmmoName);
-			AmmoID = u16(m_strWeaponsData->GetItemIdx(BaseAmmoName) & 0xffff);
+			AmmoID = u16(m_strWeaponsData->GetItemIdx(BaseAmmoName) & 0xffffffff);
 		};
 		//		if (!pWpnS->WeaponBaseAmmo.size()) continue;
 		//		WeaponDataStruct* pWpnAmmo = NULL;
 		//		if (!GetTeamItem_ByName(&pWpnAmmo, &(TeamList[ps->team].aWeapons), *(pWpnS->WeaponBaseAmmo))) continue;
-		if (AmmoID == u16(-1)) continue;
+		if (AmmoID == u32(-1)) continue;
 
 		//		ps->pItemList.push_back(pWpnAmmo->SlotItem_ID);
 		//		ps->pItemList.push_back(pWpnAmmo->SlotItem_ID);

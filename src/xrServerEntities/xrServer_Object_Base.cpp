@@ -84,9 +84,9 @@ CSE_Abstract::CSE_Abstract(LPCSTR caSection)
 	RespawnTime = 0;
 	net_Ready = FALSE;
 	net_Processed = FALSE;
-	ID = 0xffff;
-	ID_Parent = 0xffff;
-	ID_Phantom = 0xffff;
+	ID = u32(-1);
+	ID_Parent = u32(-1);
+	ID_Phantom = u32(-1);
 	owner = 0;
 	m_gameType.SetDefaults();
 	//.	s_gameid					= 0;
@@ -206,9 +206,9 @@ void CSE_Abstract::Spawn_Write(NET_Packet& tNetPacket, BOOL bLocal)
 	tNetPacket.w_vec3(o_Position);
 	tNetPacket.w_vec3(o_Angle);
 	tNetPacket.w_u16(RespawnTime);
-	tNetPacket.w_u16(ID);
-	tNetPacket.w_u16(ID_Parent);
-	tNetPacket.w_u16(ID_Phantom);
+	tNetPacket.w_u32(ID);
+	tNetPacket.w_u32(ID_Parent);
+	tNetPacket.w_u32(ID_Phantom);
 
 	s_flags.set(M_SPAWN_VERSION,TRUE);
 	if (bLocal)
@@ -289,9 +289,9 @@ BOOL CSE_Abstract::Spawn_Read(NET_Packet& tNetPacket)
 	tNetPacket.r_vec3(o_Position);
 	tNetPacket.r_vec3(o_Angle);
 	tNetPacket.r_u16(RespawnTime);
-	tNetPacket.r_u16(ID);
-	tNetPacket.r_u16(ID_Parent);
-	tNetPacket.r_u16(ID_Phantom);
+	tNetPacket.r_u32(ID);
+	tNetPacket.r_u32(ID_Parent);
+	tNetPacket.r_u32(ID_Phantom);
 
 	tNetPacket.r_u16(s_flags.flags);
 

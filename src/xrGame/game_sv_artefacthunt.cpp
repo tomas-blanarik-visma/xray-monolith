@@ -111,7 +111,7 @@ void game_sv_ArtefactHunt::Create(shared_str& options)
 	m_iMoney_for_BuySpawn = READ_IF_EXISTS(pSettings, r_s32, "artefacthunt_gamedata", "spawn_cost", -10000);
 	//---------------------------------------------------------------
 	Set_RankUp_Allowed(false);
-	ArtefactChooserRandom.seed(u32(CPU::QPC() & 0xffffffff));
+	ArtefactChooserRandom.seed(u32(CPU::QPC() & 0xffffffffffff));
 }
 
 void game_sv_ArtefactHunt::OnRoundStart()
@@ -402,7 +402,7 @@ void game_sv_ArtefactHunt::assign_RP(CSE_Abstract* E, game_PlayerState* ps_who)
 		NET_Packet P;
 		pPlayer->u_EventGen(P, GE_GAME_EVENT, pPlayer->ID());
 		P.w_u16(GAME_EVENT_PLAYER_KILL);
-		P.w_u16(u16(pPlayer->ID()));
+		P.w_u32(pPlayer->ID());
 		pPlayer->u_EventSend(P);
 	}
 	else
@@ -505,7 +505,7 @@ void game_sv_ArtefactHunt::LoadTeams()
 	LoadTeamData("artefacthunt_team2");
 };
 
-BOOL game_sv_ArtefactHunt::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
+BOOL game_sv_ArtefactHunt::OnTouch(u32 eid_who, u16 eid_what, BOOL bForced)
 {
 	CSE_Abstract* e_who = m_server->ID_to_entity(eid_who);
 	VERIFY(e_who);
@@ -583,7 +583,7 @@ BOOL game_sv_ArtefactHunt::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
 	return inherited::OnTouch(eid_who, eid_what, bForced);
 };
 
-void game_sv_ArtefactHunt::OnDetach(u16 eid_who, u16 eid_what)
+void game_sv_ArtefactHunt::OnDetach(u32 eid_who, u16 eid_what)
 {
 	CSE_Abstract* e_who = m_server->ID_to_entity(eid_who);
 	VERIFY(e_who);
@@ -635,8 +635,8 @@ void game_sv_ArtefactHunt::OnObjectEnterTeamBase(u16 id, u16 zone_team)
 
 			signal_Syncronize();
 
-			xr_vector<u16>& C = eActor->children;
-			xr_vector<u16>::iterator c = std::find(C.begin(), C.end(), m_dwArtefactID);
+			xr_vector<u32>& C = eActor->children;
+			xr_vector<u32>::iterator c = std::find(C.begin(), C.end(), m_dwArtefactID);
 			if (C.end() != c)
 			{
 				OnArtefactOnBase(eActor->owner->ID);
@@ -930,7 +930,7 @@ bool game_sv_ArtefactHunt::ArtefactSpawn_Allowed()
 	return TRUE;
 };
 
-void game_sv_ArtefactHunt::OnCreate(u16 id_who)
+void game_sv_ArtefactHunt::OnCreate(u32 id_who)
 {
 	inherited::OnCreate(id_who);
 

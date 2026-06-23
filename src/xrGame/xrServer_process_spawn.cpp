@@ -51,7 +51,7 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
 	}
 
 	CSE_Abstract* e_parent = 0;
-	if (E->ID_Parent != 0xffff)
+	if (E->ID_Parent != 0xffffffff)
 	{
 		e_parent = ID_to_entity(E->ID_Parent);
 		if (!e_parent)
@@ -70,13 +70,13 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
 	}
 
 	// check for respawn-capability and create phantom as needed
-	if (E->RespawnTime && (0xffff == E->ID_Phantom))
+	if (E->RespawnTime && (0xffffffff == E->ID_Phantom))
 	{
 		// Create phantom
 		CSE_Abstract* Phantom = entity_Create(*E->s_name);
 		R_ASSERT(Phantom);
 		Phantom->Spawn_Read(P);
-		Phantom->ID = PerformIDgen(0xffff);
+		Phantom->ID = PerformIDgen(0xffffffff);
 		Phantom->ID_Phantom = Phantom->ID; // Self-linked to avoid phantom-breeding
 		Phantom->owner = NULL;
 		entities.insert(mk_pair(Phantom->ID, Phantom));
@@ -94,7 +94,7 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
 		if (E->s_flags.is(M_SPAWN_OBJECT_PHANTOM))
 		{
 			// Clone from Phantom
-			E->ID = PerformIDgen(0xffff);
+			E->ID = PerformIDgen(0xffffffff);
 			E->owner = CL; //		= SelectBestClientToMigrateTo	(E);
 			E->s_flags.set(M_SPAWN_OBJECT_PHANTOM,FALSE);
 			entities.insert({ E->ID, E });
@@ -131,7 +131,7 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
 	{
 		game->OnCreate(E->ID);
 
-		if (0xffff != E->ID_Parent)
+		if (0xffffffff != E->ID_Parent)
 		{
 			R_ASSERT(e_parent);
 
