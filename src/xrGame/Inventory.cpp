@@ -1187,13 +1187,13 @@ bool CInventory::InSlot(const CInventoryItem* pIItem) const
 
 bool CInventory::InBelt(const CInventoryItem* pIItem) const
 {
-	if (Get(pIItem->object().ID(), false)) return true;
+	if (Get(static_cast<u16>(pIItem->object().ID()), false)) return true;
 	return false;
 }
 
 bool CInventory::InRuck(const CInventoryItem* pIItem) const
 {
-	if (Get(pIItem->object().ID(), true)) return true;
+	if (Get(static_cast<u16>(pIItem->object().ID()), true)) return true;
 	return false;
 }
 

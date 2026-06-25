@@ -49,7 +49,7 @@ public:
 	virtual void SetCurrentParentID(u32 parent_id) { m_iCurrentParentID = parent_id; }
 	IC u32 CurrentParentID() const { return m_iCurrentParentID; }
 
-	virtual void SetInitiator(u32 id) { SetCurrentParentID(id); }
+	virtual void SetInitiator(u16 id) { SetCurrentParentID(id); }
 	virtual u16 Initiator();
 
 	virtual void UpdateExplosionPos()

@@ -77,7 +77,7 @@ void xrServer::Process_event_ownership(NET_Packet& P, ClientID sender, u32 time,
 	};
 
 	// Game allows ownership of entity
-	if (game->OnTouch(id_parent, id_entity, bForced))
+	if (game->OnTouch(id_parent, static_cast<u16>(id_entity), bForced))
 	{
 		// Perform migration if needed
 		if (c_parent != c_entity) PerformMigration(e_entity, c_entity, c_parent);

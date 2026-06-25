@@ -69,7 +69,7 @@ bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const 
 		//it can't be !!!
 	}
 
-	game->OnDetach(id_parent, id_entity);
+	game->OnDetach(id_parent, static_cast<u16>(id_entity));
 
 	//R_ASSERT3(C.end()!=c,e_entity->name_replace(),e_parent->name_replace());
 	e_entity->ID_Parent = u32(-1);

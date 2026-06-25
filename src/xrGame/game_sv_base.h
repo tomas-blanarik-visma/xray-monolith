@@ -182,8 +182,8 @@ public:
 	virtual void OnPostCreate(u32 id_who)
 	{
 	};
-	virtual BOOL OnTouch(u32 eid_who, u32 eid_target, BOOL bForced = FALSE) = 0; // TRUE=allow ownership, FALSE=denied
-	virtual void OnDetach(u32 eid_who, u32 eid_target) = 0;
+	virtual BOOL OnTouch(u32 eid_who, u16 eid_target, BOOL bForced = FALSE) = 0; // TRUE=allow ownership, FALSE=denied
+	virtual void OnDetach(u32 eid_who, u16 eid_target) = 0;
 	virtual BOOL OnActivate(u32 eid_who, u32 eid_target) { return TRUE; };
 
 	virtual void OnDestroyObject(u32 eid_who);
