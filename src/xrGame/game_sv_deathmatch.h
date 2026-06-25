@@ -89,7 +89,7 @@ protected:
 	virtual void OnPlayerBuyFinished(ClientID id_who, NET_Packet& P);
 
 	virtual void CheckItem(game_PlayerState* ps, PIItem pItem, xr_vector<s16>* pItemsDesired,
-	                       xr_vector<u16>* pItemsToDelete, bool ExactMatch);
+	                       xr_vector<u32>* pItemsToDelete, bool ExactMatch);
 	virtual bool HasChampion();
 
 	virtual void check_Player_for_Invincibility(game_PlayerState* ps);
@@ -126,12 +126,12 @@ public:
 	virtual void OnPlayerHitPlayer(u16 id_hitter, u16 id_hitted, NET_Packet& P); //игрок получил Hit
 	virtual void OnPlayerHitPlayer_Case(game_PlayerState* ps_hitter, game_PlayerState* ps_hitted, SHit* pHitS);
 
-	virtual BOOL OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);
-	virtual void OnDetach(u16 eid_who, u16 eid_what);
+	virtual BOOL OnTouch(u32 eid_who, u16 eid_what, BOOL bForced = FALSE);
+	virtual void OnDetach(u32 eid_who, u16 eid_what);
 
 	virtual BOOL OnPreCreate(CSE_Abstract* E);
-	virtual void OnCreate(u16 eid_who);
-	virtual void OnPostCreate(u16 id_who);
+	virtual void OnCreate(u32 eid_who);
+	virtual void OnPostCreate(u32 id_who);
 
 	virtual void OnPlayerConnect(ClientID id_who);
 	virtual void OnPlayerConnectFinished(ClientID id_who);
@@ -155,7 +155,7 @@ public:
 	virtual void OnFraglimitExceed();
 	virtual void OnTimelimitExceed();
 	void OnPlayerScores();
-	virtual void OnDestroyObject(u16 eid_who);
+	virtual void OnDestroyObject(u32 eid_who);
 	virtual void OnPlayerFire(ClientID id_who, NET_Packet& P);
 	// Main
 	virtual void Update();

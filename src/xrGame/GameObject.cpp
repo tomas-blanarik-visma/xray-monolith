@@ -412,7 +412,7 @@ BOOL CGameObject::net_Spawn(CSE_Abstract* DC)
 	// if we have a parent
 	if (ai().get_level_graph())
 	{
-		if (E->ID_Parent == 0xffff)
+		if (E->ID_Parent == u32(-1))
 		{
 			CSE_ALifeObject* l_tpALifeObject = smart_cast<CSE_ALifeObject*>(E);
 			if (l_tpALifeObject && ai().level_graph().valid_vertex_id(l_tpALifeObject->m_tNodeID))
@@ -958,7 +958,7 @@ void CGameObject::u_EventGen(NET_Packet& P, u32 type, u32 dest)
 	P.w_begin(M_EVENT);
 	P.w_u32(Level().timeServer());
 	P.w_u16(u16(type & 0xffff));
-	P.w_u16(u16(dest & 0xffff));
+	P.w_u32(dest);
 }
 
 void CGameObject::u_EventSend(NET_Packet& P, u32 dwFlags)

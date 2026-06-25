@@ -298,9 +298,9 @@ void CWeaponStatMgun::SStmAnimWeapon::CreateMagazine()
 	D->s_name._set(m_magazine_sec.c_str());
 	D->set_name_replace("");
 	D->s_RP = 0xff;
-	D->ID = 0xffff;
+	D->ID = u32(-1);
 	D->ID_Parent = m_stm->ID();
-	D->ID_Phantom = 0xffff;
+	D->ID_Phantom = u32(-1);
 	D->s_flags.assign(M_SPAWN_OBJECT_LOCAL);
 	D->RespawnTime = 0;
 
@@ -327,7 +327,7 @@ void CWeaponStatMgun::SStmAnimWeapon::LaunchMagazine(CObject *O)
 
 	NET_Packet P;
 	m_stm->u_EventGen(P, GE_LAUNCH_ROCKET, m_stm->ID());
-	P.w_u16(u16(O->ID()));
+	P.w_u32(O->ID());
 	m_stm->u_EventSend(P);
 }
 

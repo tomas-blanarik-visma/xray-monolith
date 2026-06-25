@@ -87,12 +87,12 @@ u32 game_sv_GameState::get_players_count()
 	return m_server->GetClientsCount();
 }
 
-u16 game_sv_GameState::get_id_2_eid(ClientID id)
+u32 game_sv_GameState::get_id_2_eid(ClientID id)
 {
 	xrClientData* C = (xrClientData*)m_server->ID_to_client(id);
-	if (0 == C) return 0xffff;
+	if (0 == C) return 0xffffffff;
 	CSE_Abstract* E = C->owner;
-	if (0 == E) return 0xffff;
+	if (0 == E) return 0xffffffff;
 	return E->ID;
 }
 
@@ -187,7 +187,7 @@ u32 game_sv_GameState::get_alive_count(u32 team)
 	return tmp_counter.count;
 }
 
-xr_vector<u16>* game_sv_GameState::get_children(ClientID id)
+xr_vector<u32>* game_sv_GameState::get_children(ClientID id)
 {
 	xrClientData* C = (xrClientData*)m_server->ID_to_client(id);
 	if (0 == C) return 0;
@@ -610,9 +610,9 @@ CSE_Abstract* game_sv_GameState::spawn_begin(LPCSTR N)
 	A->s_name = N; // ltx-def
 	//.	A->s_gameid			=	u8(m_type);							// game-type
 	A->s_RP = 0xFE; // use supplied
-	A->ID = 0xffff; // server must generate ID
-	A->ID_Parent = 0xffff; // no-parent
-	A->ID_Phantom = 0xffff; // no-phantom
+	A->ID = u32(-1); // server must generate ID
+	A->ID_Parent = u32(-1); // no-parent
+	A->ID_Phantom = u32(-1); // no-phantom
 	A->RespawnTime = 0; // no-respawn
 	return A;
 }
@@ -634,12 +634,12 @@ void game_sv_GameState::GenerateGameMessage(NET_Packet& P)
 	P.w_begin(M_GAMEMESSAGE);
 };
 
-void game_sv_GameState::u_EventGen(NET_Packet& P, u16 type, u16 dest)
+void game_sv_GameState::u_EventGen(NET_Packet& P, u16 type, u32 dest)
 {
 	P.w_begin(M_EVENT);
 	P.w_u32(Level().timeServer()); //Device.TimerAsync());
 	P.w_u16(type);
-	P.w_u16(dest);
+	P.w_u32(dest);
 }
 
 void game_sv_GameState::u_EventSend(NET_Packet& P, u32 dwFlags)
@@ -678,7 +678,7 @@ void game_sv_GameState::Update()
 	}
 }
 
-void game_sv_GameState::OnDestroyObject(u16 eid_who)
+void game_sv_GameState::OnDestroyObject(u32 eid_who)
 {
 }
 
@@ -777,8 +777,8 @@ void game_sv_GameState::OnEvent(NET_Packet& tNetPacket, u16 type, u32 time, Clie
 		break ;
 	case GAME_EVENT_ON_HIT:
 		{
-			u16 id_dest = tNetPacket.r_u16();
-			u16 id_src = tNetPacket.r_u16();
+			u32 id_dest = tNetPacket.r_u32();
+			u32 id_src = tNetPacket.r_u32();
 			CSE_Abstract* e_src = get_entity_from_eid(id_src);
 
 			if (!e_src) // && !IsGameTypeSingle() added by andy because of Phantom does not have server entity
@@ -934,14 +934,14 @@ void game_sv_GameState::ProcessDelayedEvent()
 class EventDeleterPredicate
 {
 private:
-	u16 id_entity_victim;
+	u32 id_entity_victim;
 public:
 	EventDeleterPredicate()
 	{
 		id_entity_victim = u16(-1);
 	}
 
-	EventDeleterPredicate(u16 id_entity)
+	EventDeleterPredicate(u32 id_entity)
 	{
 		id_entity_victim = id_entity;
 	}
@@ -955,7 +955,7 @@ public:
 		case GAME_EVENT_PLAYER_HITTED:
 			{
 				u32 tmp_pos = ge->P.r_tell();
-				u16 id_entity_for = ge->P.r_u16();
+				u32 id_entity_for = ge->P.r_u32();
 				if (id_entity_for == id_entity_victim)
 					ret_val = true;
 				ge->P.r_seek(tmp_pos);
@@ -972,7 +972,7 @@ public:
 	}
 };
 
-void game_sv_GameState::CleanDelayedEventFor(u16 id_entity_victim)
+void game_sv_GameState::CleanDelayedEventFor(u32 id_entity_victim)
 {
 	EventDeleterPredicate event_deleter(id_entity_victim);
 	m_event_queue->EraseEvents(

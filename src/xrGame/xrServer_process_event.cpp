@@ -18,7 +18,7 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 
 	u32 timestamp;
 	u16 type;
-	u16 destination;
+	u32 destination;
 	u32 MODE = net_flags(TRUE,TRUE);
 
 	// correct timestamp with server-unique-time (note: direct message correction)
@@ -26,7 +26,7 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 
 	// read generic info
 	P.r_u16(type);
-	P.r_u16(destination);
+	P.r_u32(destination);
 
 	CSE_Abstract* receiver = game->get_entity_from_eid(destination);
 	if (receiver)
@@ -106,7 +106,7 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 	case GE_OWNERSHIP_REJECT:
 	case GE_LAUNCH_ROCKET:
 		{
-			Process_event_reject(P, sender, timestamp, destination, P.r_u16());
+			Process_event_reject(P, sender, timestamp, destination, P.r_u32());
 #ifdef DEBUG
 			VERIFY(verify_entities());
 #endif
@@ -122,12 +122,12 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 		break;
 	case GE_TRANSFER_AMMO:
 		{
-			u16 id_entity;
-			P.r_u16(id_entity);
+			u32 id_entity;
+			P.r_u32(id_entity);
 			CSE_Abstract* e_parent = receiver; // кто забирает (для своих нужд)
 			CSE_Abstract* e_entity = game->get_entity_from_eid(id_entity); // кто отдает
 			if (!e_entity) break;
-			if (0xffff != e_entity->ID_Parent) break; // this item already taken
+			if (0xffffffff != e_entity->ID_Parent) break; // this item already taken
 			xrClientData* c_parent = e_parent->owner;
 			xrClientData* c_from = ID_to_client(sender);
 			R_ASSERT(c_from == c_parent); // assure client ownership of event
@@ -156,8 +156,8 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 		break;
 	case GE_ASSIGN_KILLER:
 		{
-			u16 id_src;
-			P.r_u16(id_src);
+			u32 id_src;
+			P.r_u32(id_src);
 
 			CSE_Abstract* e_dest = receiver; // кто умер
 			// this is possible when hit event is sent before destroy event
@@ -168,7 +168,7 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 			if (creature)
 				creature->set_killer_id(id_src);
 
-			//		Msg							("[%d][%s] killed [%d][%s]",id_src,id_src==u16(-1) ? "UNKNOWN" : game->get_entity_from_eid(id_src)->name_replace(),id_dest,e_dest->name_replace());
+			//		Msg							("[%d][%s] killed [%d][%s]",id_src,id_src==u32(-1) ? "UNKNOWN" : game->get_entity_from_eid(id_src)->name_replace(),id_dest,e_dest->name_replace());
 
 			break;
 		}
@@ -184,8 +184,8 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 	case GE_DIE:
 		{
 			// Parse message
-			u16 id_dest = destination, id_src;
-			P.r_u16(id_src);
+			u32 id_dest = destination, id_src;
+			P.r_u32(id_src);
 
 
 			xrClientData* l_pC = ID_to_client(sender);

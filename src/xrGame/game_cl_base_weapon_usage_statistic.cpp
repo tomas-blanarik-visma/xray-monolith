@@ -851,7 +851,7 @@ void WeaponUsageStatistic::OnExplosionKill(game_PlayerState* ps, const SHit& hit
 	CObject* killer = hit.who;
 	if (!killer) return;
 
-	u16 killer_id = hit.whoID;
+	u32 killer_id = hit.whoID;
 	game_PlayerState* killerPS = Game().GetPlayerByGameID(killer_id);
 	if (!killerPS) return;
 

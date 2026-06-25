@@ -185,7 +185,7 @@ CActor::CActor() : CEntityAlive(), current_ik_cam_shift(0)
     m_fFeelGrenadeTime = 1.0f;
 
 	m_holder = NULL;
-	m_holderID = u16(-1);
+	m_holderID = ALife::_OBJECT_ID(-1);
 
 
 #ifdef DEBUG
@@ -222,8 +222,8 @@ CActor::CActor() : CEntityAlive(), current_ik_cam_shift(0)
 #endif
 	//-Alundaio
 	m_entity_condition = NULL;
-	m_iLastHitterID = u16(-1);
-	m_iLastHittingWeaponID = u16(-1);
+	m_iLastHitterID = u32(-1);
+	m_iLastHittingWeaponID = u32(-1);
 	m_statistic_manager = NULL;
 	//-----------------------------------------------------------------------------------
 	m_memory = g_dedicated_server ? 0 : xr_new<CActorMemory>(this);
@@ -1599,7 +1599,7 @@ void CActor::detach_Vehicle(bool bForce)
 
 		m_holder->detach_Actor();
 		m_holder = NULL;
-		m_holderID = u16(-1);
+		m_holderID = ALife::_OBJECT_ID(-1);
 
 		SetCallbacks();
 		IKinematicsAnimated *V = smart_cast<IKinematicsAnimated *>(Visual());
@@ -1655,7 +1655,7 @@ bool CActor::use_HolderEx(CHolderCustom* object, bool bForce)
 				SetCallbacks();
 
 				m_holder = NULL;
-				m_holderID = u16(-1);
+				m_holderID = ALife::_OBJECT_ID(-1);
 
 				IKinematicsAnimated* V = smart_cast<IKinematicsAnimated*>(Visual()); R_ASSERT(V);
 				V->PlayCycle(m_anims->m_normal.legs_idle);
@@ -1745,7 +1745,7 @@ void CActor::on_requested_spawn(CObject *object)
 	character_physics_support()->movement()->SetVelocity(oHolder->ExitVelocity());
 
 	m_holder = NULL;
-	m_holderID = (u16)(-1);
+	m_holderID = ALife::_OBJECT_ID(-1);
 
 	use_HolderEx(oHolder, true);
 
@@ -2320,7 +2320,7 @@ void CActor::OnHUDDraw(CCustomHUD*)
     if (Level().CurrentControlEntity() == this && g_ShowAnimationInfo)
     {
         string128 buf;
-        UI().Font().pFontStat->SetColor	(0xffffffff);
+        UI().Font().pFontStat->SetColor	(0xffffffffffff);
         UI().Font().pFontStat->OutSet		(170,530);
         UI().Font().pFontStat->OutNext	("Position:      [%3.2f, %3.2f, %3.2f]",VPUSH(Position()));
         UI().Font().pFontStat->OutNext	("Velocity:      [%3.2f, %3.2f, %3.2f]",VPUSH(m_PhysicMovementControl->GetVelocity()));
@@ -2339,7 +2339,7 @@ void CActor::OnHUDDraw(CCustomHUD*)
             float Size = 0;
             Size = UI().Font().pFontStat->GetSize();
             UI().Font().pFontStat->SetSize(Size*2);
-            UI().Font().pFontStat->SetColor	(0xffff0000);
+            UI().Font().pFontStat->SetColor	(0xffffffff0000);
             UI().Font().pFontStat->OutNext ("Input :		[%3.2f]", ICoincidenced/IReceived * 100.0f);
             UI().Font().pFontStat->SetSize(Size);
         };
@@ -2376,14 +2376,14 @@ void CActor::RenderIndicator(Fvector dpos, float r1, float r2, const ui_shader& 
 	c.invert(a);
 	d.invert(b);
 
-	UIRender->PushPoint(d.x + pos.x, d.y + pos.y, d.z + pos.z, 0xffffffff, 0.f, 1.f);
-	UIRender->PushPoint(a.x + pos.x, a.y + pos.y, a.z + pos.z, 0xffffffff, 0.f, 0.f);
-	UIRender->PushPoint(c.x + pos.x, c.y + pos.y, c.z + pos.z, 0xffffffff, 1.f, 1.f);
-	UIRender->PushPoint(b.x + pos.x, b.y + pos.y, b.z + pos.z, 0xffffffff, 1.f, 0.f);
-	//pv->set         (d.x+pos.x,d.y+pos.y,d.z+pos.z, 0xffffffff, 0.f,1.f);        pv++;
-	//pv->set         (a.x+pos.x,a.y+pos.y,a.z+pos.z, 0xffffffff, 0.f,0.f);        pv++;
-	//pv->set         (c.x+pos.x,c.y+pos.y,c.z+pos.z, 0xffffffff, 1.f,1.f);        pv++;
-	//pv->set         (b.x+pos.x,b.y+pos.y,b.z+pos.z, 0xffffffff, 1.f,0.f);        pv++;
+	UIRender->PushPoint(d.x + pos.x, d.y + pos.y, d.z + pos.z, 0xffffffffffff, 0.f, 1.f);
+	UIRender->PushPoint(a.x + pos.x, a.y + pos.y, a.z + pos.z, 0xffffffffffff, 0.f, 0.f);
+	UIRender->PushPoint(c.x + pos.x, c.y + pos.y, c.z + pos.z, 0xffffffffffff, 1.f, 1.f);
+	UIRender->PushPoint(b.x + pos.x, b.y + pos.y, b.z + pos.z, 0xffffffffffff, 1.f, 0.f);
+	//pv->set         (d.x+pos.x,d.y+pos.y,d.z+pos.z, 0xffffffffffff, 0.f,1.f);        pv++;
+	//pv->set         (a.x+pos.x,a.y+pos.y,a.z+pos.z, 0xffffffffffff, 0.f,0.f);        pv++;
+	//pv->set         (c.x+pos.x,c.y+pos.y,c.z+pos.z, 0xffffffffffff, 1.f,1.f);        pv++;
+	//pv->set         (b.x+pos.x,b.y+pos.y,b.z+pos.z, 0xffffffffffff, 1.f,0.f);        pv++;
 	// render	
 	//dwCount 				= u32(pv-pv_start);
 	//RCache.Vertex.Unlock	(dwCount,hFriendlyIndicator->vb_stride);

@@ -27,7 +27,6 @@ BOOL debug_destroy = TRUE;
 CObjectList::CObjectList() :
 	m_owner_thread_id(GetCurrentThreadId())
 {
-	ZeroMemory(map_NETID, 0xffff * sizeof(CObject*));
 }
 
 CObjectList::~CObjectList()
@@ -35,7 +34,7 @@ CObjectList::~CObjectList()
 	R_ASSERT(objects_active.empty());
 	R_ASSERT(objects_sleeping.empty());
 	R_ASSERT(destroy_queue.empty());
-	//. R_ASSERT ( map_NETID.empty() );
+	R_ASSERT(map_NETID.empty());
 }
 
 CObject* CObjectList::FindObjectByName(shared_str name)
@@ -69,14 +68,9 @@ CObject* CObjectList::FindObjectByCLS_ID(CLASS_ID cls)
 
 void CObjectList::o_remove(Objects& v, CObject* O)
 {
-	//. if(O->ID()==1026)
-	//. {
-	//. Log("ahtung");
-	//. }
 	Objects::iterator _i = std::find(v.begin(), v.end(), O);
 	VERIFY(_i != v.end());
 	v.erase(_i);
-	//. Msg("---o_remove[%s][%d]", O->cName().c_str(), O->ID() );
 }
 
 void CObjectList::o_activate(CObject* O)
@@ -316,9 +310,9 @@ void CObjectList::Update(bool bForce)
 void CObjectList::net_Register(CObject* O)
 {
 	R_ASSERT(O);
-	R_ASSERT(O->ID() < 0xffff);
+	R_ASSERT(O->ID() != u32(-1));
 
-	map_NETID[O->ID()] = O;
+	map_NETID.insert(std::make_pair(O->ID(), O));
 
 
 	//. map_NETID.insert(mk_pair(O->ID(),O));
@@ -328,8 +322,8 @@ void CObjectList::net_Register(CObject* O)
 void CObjectList::net_Unregister(CObject* O)
 {
 	//R_ASSERT (O->ID() < 0xffff);
-	if (O->ID() < 0xffff) //demo_spectator can have 0xffff
-		map_NETID[O->ID()] = NULL;
+	if (O->ID() != u32(-1))
+		map_NETID.erase(O->ID());
 	/*
 	 xr_map<u32,CObject*>::iterator it = map_NETID.find(O->ID());
 	 if ((it!=map_NETID.end()) && (it->second == O)) {
@@ -354,7 +348,7 @@ u32 CObjectList::net_Export(NET_Packet* _Packet, u32 start, u32 max_object_size)
 			             : objects_sleeping[start - objects_active.size()];
 		if (P->net_Relevant() && !P->getDestroy())
 		{
-			Packet.w_u16(u16(P->ID()));
+			Packet.w_u32(P->ID());
 			Packet.w_chunk_open8(position);
 			//Msg ("cl_export: %d '%s'",P->ID(),*P->cName());
 			P->net_Export(Packet);
@@ -391,8 +385,8 @@ void CObjectList::net_Import(NET_Packet* Packet)
 
 	while (!Packet->r_eof())
 	{
-		u16 ID;
-		Packet->r_u16(ID);
+		u32 ID;
+		Packet->r_u32(ID);
 		u8 size;
 		Packet->r_u8(size);
 		CObject* P = net_Find(ID);
@@ -410,14 +404,6 @@ void CObjectList::net_Import(NET_Packet* Packet)
 	if (g_Dump_Import_Obj) Msg("------------------- ");
 }
 
-/*
-CObject* CObjectList::net_Find(u16 ID)
-{
-
-xr_map<u32,CObject*>::iterator it = map_NETID.find(ID);
-return (it==map_NETID.end())?0:it->second;
-}
-*/
 void CObjectList::Load()
 {
 	R_ASSERT(/*map_NETID.empty() &&*/ objects_active.empty() && destroy_queue.empty() && objects_sleeping.empty());

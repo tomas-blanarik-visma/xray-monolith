@@ -401,7 +401,7 @@ void CSoundMemoryManager::save(NET_Packet& packet) const
 	SOUNDS::const_iterator E = objects().end();
 	for (; I != E; ++I)
 	{
-		packet.w_u16((*I).m_object ? (*I).m_object->ID() : ALife::_OBJECT_ID(-1));
+		packet.w_u32((*I).m_object ? (*I).m_object->ID() : ALife::_OBJECT_ID(-1));
 		// object params
 		packet.w_u32((*I).m_object_params.m_level_vertex_id);
 		packet.w_vec3((*I).m_object_params.m_position);

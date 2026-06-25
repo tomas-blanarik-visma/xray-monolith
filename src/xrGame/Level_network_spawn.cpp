@@ -62,9 +62,9 @@ void CLevel::g_cl_Spawn(LPCSTR name, u8 rp, u16 flags, Fvector pos)
 	E->set_name_replace("");
 	//.	E->s_gameid			=	u8(GameID());
 	E->s_RP = rp;
-	E->ID = 0xffff;
-	E->ID_Parent = 0xffff;
-	E->ID_Phantom = 0xffff;
+	E->ID = u32(-1);
+	E->ID_Parent = u32(-1);
+	E->ID_Phantom = u32(-1);
 	E->s_flags.assign(flags);
 	E->RespawnTime = 0;
 	E->o_Position = pos;
@@ -159,7 +159,7 @@ void CLevel::g_sv_Spawn(CSE_Abstract* E)
 			}
 		}
 
-		if (0xffff != E->ID_Parent)
+		if (u32(-1) != E->ID_Parent)
 		{
 			/*
 			// Generate ownership-event
@@ -167,14 +167,14 @@ void CLevel::g_sv_Spawn(CSE_Abstract* E)
 			GEN.w_begin			(M_EVENT);
 			GEN.w_u32			(E->m_dwSpawnTime);//-NET_Latency);
 			GEN.w_u16			(GE_OWNERSHIP_TAKE);
-			GEN.w_u16			(E->ID_Parent);
-			GEN.w_u16			(u16(O->ID()));
+			GEN.w_u32			(E->ID_Parent);
+			GEN.w_u32			(O->ID());
 			game_events->insert	(GEN);
 			/*/
 			NET_Packet GEN;
 			GEN.write_start();
 			GEN.read_start();
-			GEN.w_u16(u16(O->ID()));
+			GEN.w_u32(O->ID());
 			cl_Process_Event(E->ID_Parent, GE_OWNERSHIP_TAKE, GEN);
 			//*/
 		}
@@ -234,9 +234,9 @@ CSE_Abstract* CLevel::spawn_item(LPCSTR section, const Fvector& position, u32 le
 	//.	abstract->s_gameid		= u8(GameID());
 	abstract->o_Position = position;
 	abstract->s_RP = 0xff;
-	abstract->ID = 0xffff;
+	abstract->ID = u32(-1);
 	abstract->ID_Parent = parent_id;
-	abstract->ID_Phantom = 0xffff;
+	abstract->ID_Phantom = u32(-1);
 	abstract->s_flags.assign(M_SPAWN_OBJECT_LOCAL);
 	abstract->RespawnTime = 0;
 

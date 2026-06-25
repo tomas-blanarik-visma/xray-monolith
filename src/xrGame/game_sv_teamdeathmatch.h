@@ -75,8 +75,8 @@ public:
 	BOOL OnTouchItem(CSE_ActorMP* actor, CSE_Abstract* item);
 	void OnDetachItem(CSE_ActorMP* actor, CSE_Abstract* item);
 
-	virtual BOOL OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);
-	virtual void OnDetach(u16 eid_who, u16 eid_what);
+	virtual BOOL OnTouch(u32 eid_who, u16 eid_what, BOOL bForced = FALSE);
+	virtual void OnDetach(u32 eid_who, u16 eid_what);
 
 	void OnObjectEnterTeamBase(u16 id, u16 zone_team);
 	void OnObjectLeaveTeamBase(u16 id, u16 zone_team);

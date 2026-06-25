@@ -74,7 +74,7 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 				{
 					NET_Packet P;
 					u_EventGen(P, GE_OWNERSHIP_REJECT, ID());
-					P.w_u16(u16(Obj->ID()));
+					P.w_u32(Obj->ID());
 					u_EventSend(P);
 				}
 				else

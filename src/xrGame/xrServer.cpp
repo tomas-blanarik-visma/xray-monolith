@@ -88,10 +88,10 @@ xrServer::~xrServer()
 
 //--------------------------------------------------------------------
 
-CSE_Abstract* xrServer::ID_to_entity(u16 ID)
+CSE_Abstract* xrServer::ID_to_entity(u32 ID)
 {
 	// #pragma todo("??? to all : ID_to_entity - must be replaced to 'game->entity_from_eid()'")	
-	if (0xffff == ID) return 0;
+	if (0xffffffff == ID) return 0;
 	xrS_entities::iterator I = entities.find(ID);
 	if (entities.end() != I) return I->second;
 	else return 0;
@@ -239,7 +239,7 @@ void xrServer::Update()
 		Packet.r_begin(ID);
 		R_ASSERT(M_SPAWN==ID);
 		ClientID clientID;
-		clientID.set(0xffff);
+		clientID.set(0xffffffff);
 		Process_spawn(Packet, clientID);
 	}
 
@@ -645,7 +645,7 @@ u32 xrServer::OnMessage(NET_Packet& P, ClientID sender) // Non-Zero means broadc
 	case M_CHANGE_LEVEL_GAME:
 		{
 			ClientID CID;
-			CID.set(0xffffffff);
+			CID.set(0xffffffffffff);
 			SendBroadcast(CID, P, net_flags(TRUE,TRUE));
 		}
 		break;
@@ -992,7 +992,7 @@ bool xrServer::verify_entities				() const
 	xrS_entities::const_iterator		I = entities.begin();
 	xrS_entities::const_iterator		E = entities.end();
 	for ( ; I != E; ++I) {
-		VERIFY2							((*I).first != 0xffff,"SERVER : Invalid entity id as a map key - 0xffff");
+		VERIFY2							((*I).first != 0xffffffff,"SERVER : Invalid entity id as a map key - 0xffffffff");
 		VERIFY2							((*I).second,"SERVER : Null entity object in the map");
 		VERIFY3							((*I).first == (*I).second->ID,"SERVER : ID mismatch - map key doesn't correspond to the real entity ID",(*I).second->name_replace());
 		verify_entity					((*I).second);
@@ -1003,7 +1003,7 @@ bool xrServer::verify_entities				() const
 void xrServer::verify_entity				(const CSE_Abstract *entity) const
 {
 	VERIFY(entity->m_wVersion!=0);
-	if (entity->ID_Parent != 0xffff) {
+	if (entity->ID_Parent != 0xffffffff) {
 		xrS_entities::const_iterator	J = entities.find(entity->ID_Parent);
 		VERIFY2							(J != entities.end(),
 			make_string("SERVER : Cannot find parent in the map [%s][%s]",entity->name_replace(),
@@ -1013,10 +1013,10 @@ void xrServer::verify_entity				(const CSE_Abstract *entity) const
 		VERIFY3							(std::find((*J).second->children.begin(),(*J).second->children.end(),entity->ID) != (*J).second->children.end(),"SERVER : Parent/Children relationship mismatch - Object has parent, but corresponding parent doesn't have children",(*J).second->name_replace());
 	}
 
-	xr_vector<u16>::const_iterator		I = entity->children.begin();
-	xr_vector<u16>::const_iterator		E = entity->children.end();
+	xr_vector<u32>::const_iterator		I = entity->children.begin();
+	xr_vector<u32>::const_iterator		E = entity->children.end();
 	for ( ; I != E; ++I) {
-		VERIFY3							(*I != 0xffff,"SERVER : Invalid entity children id - 0xffff",entity->name_replace());
+		VERIFY3							(*I != 0xffffffff,"SERVER : Invalid entity children id - 0xffffffff",entity->name_replace());
 		xrS_entities::const_iterator	J = entities.find(*I);
 		VERIFY3							(J != entities.end(),"SERVER : Cannot find children in the map",entity->name_replace());
 		VERIFY3							((*J).second,"SERVER : Null entity object in the map",entity->name_replace());

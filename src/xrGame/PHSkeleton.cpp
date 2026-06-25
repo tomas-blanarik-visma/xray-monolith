@@ -438,9 +438,9 @@ void CPHSkeleton::InitServerObject(CSE_Abstract* D)
 	D->set_name_replace("");
 	//.	D->s_gameid			=	u8(GameID());
 	D->s_RP = 0xff;
-	D->ID = 0xffff;
-	D->ID_Parent = 0xffff; //u16(ID());//
-	D->ID_Phantom = 0xffff;
+	D->ID = u32(-1);
+	D->ID_Parent = u32(-1);
+	D->ID_Phantom = u32(-1);
 	D->o_Position = obj->Position();
 	if (ai().get_alife())
 		l_tpALifeDynamicObject->m_tGraphID = ai().game_graph().current_level_vertex();

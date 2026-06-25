@@ -79,7 +79,7 @@ public:
 
 	IC bool attached() const
 	{
-		return (base()->ID_Parent < 0xffff);
+		return (base()->ID_Parent != u32(-1));
 	}
 
 	virtual bool bfUseful();

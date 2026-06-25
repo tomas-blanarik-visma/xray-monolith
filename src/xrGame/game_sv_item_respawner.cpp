@@ -112,9 +112,9 @@ CSE_Abstract* item_respawn_manager::make_respawn_entity(shared_str const& sectio
 	R_ASSERT2(temp_entity, make_string("failed to create entity [%s]",
 		          section_name.c_str()).c_str());
 
-	temp_entity->ID = 0xffff; // server must generate ID
-	temp_entity->ID_Parent = 0xffff; // no-parent
-	temp_entity->ID_Phantom = 0xffff; // no-phantom
+	temp_entity->ID = u32(-1); // server must generate ID
+	temp_entity->ID_Parent = u32(-1); // no-parent
+	temp_entity->ID_Phantom = u32(-1); // no-phantom
 	temp_entity->RespawnTime = 0; // no-respawn
 	CSE_ALifeItemWeapon* pWeapon = smart_cast<CSE_ALifeItemWeapon*>(temp_entity);
 
@@ -355,7 +355,7 @@ void item_respawn_manager::clear_level_items()
 		if (!entity)
 			continue; // this can be in case ending of a round...
 		//VERIFY2(entity, make_string("entity not found [%d]", *i).c_str());
-		if (entity->ID_Parent != u16(-1))
+		if (entity->ID_Parent != u32(-1))
 			continue;
 #ifndef MASTER_GOLD
 		Msg("---Destroying level item [%d] before respawn...", *i);

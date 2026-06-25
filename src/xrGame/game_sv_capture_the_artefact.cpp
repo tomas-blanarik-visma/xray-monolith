@@ -1308,7 +1308,7 @@ void game_sv_CaptureTheArtefact::LoadDefItemsForTeam(const shared_str& caSection
 	for (u32 i = 0; i < count; ++i)
 	{
 		_GetItem(DefItems, i, ItemName);
-		pDefItems->push_back(u16(m_strWeaponsData->GetItemIdx(ItemName) & 0xffff));
+		pDefItems->push_back(u16(m_strWeaponsData->GetItemIdx(ItemName) & 0xffffffff));
 	};
 };
 
@@ -1704,7 +1704,7 @@ void game_sv_CaptureTheArtefact::ReSpawnArtefacts()
 }
 
 // TRUE=allow ownership, FALSE=denied
-BOOL game_sv_CaptureTheArtefact::OnTouch(u16 eid_who, u16 eid_target, BOOL bForced)
+BOOL game_sv_CaptureTheArtefact::OnTouch(u32 eid_who, u16 eid_target, BOOL bForced)
 {
 	CSE_ActorMP* e_who = smart_cast<CSE_ActorMP*>(m_server->ID_to_entity(eid_who));
 
@@ -1810,7 +1810,7 @@ BOOL game_sv_CaptureTheArtefact::OnTouchItem(CSE_ActorMP* actor, CSE_Abstract* i
 	VERIFY(actor);
 	VERIFY(item);
 
-	if ((item->m_tClassID == CLSID_OBJECT_PLAYERS_BAG) && (item->ID_Parent == 0xffff))
+	if ((item->m_tClassID == CLSID_OBJECT_PLAYERS_BAG) && (item->ID_Parent == 0xffffffff))
 	{
 		//-------------------------------
 		//move all items from rukzak to player
@@ -1865,7 +1865,7 @@ BOOL game_sv_CaptureTheArtefact::OnTouchItem(CSE_ActorMP* actor, CSE_Abstract* i
 	return TRUE;
 }
 
-void game_sv_CaptureTheArtefact::OnDetach(u16 eid_who, u16 eid_target)
+void game_sv_CaptureTheArtefact::OnDetach(u32 eid_who, u16 eid_target)
 {
 	TeamsMap::iterator te = teams.end();
 	TeamsMap::iterator artefactOfTeam = std::find_if(teams.begin(), te,
@@ -1905,7 +1905,7 @@ void game_sv_CaptureTheArtefact::OnDetach(u16 eid_who, u16 eid_target)
 	OnDetachItem(e_who, e_item);
 }
 
-BOOL game_sv_CaptureTheArtefact::OnActivate(u16 eid_who, u16 eid_target)
+BOOL game_sv_CaptureTheArtefact::OnActivate(u32 eid_who, u16 eid_target)
 {
 	TeamsMap::iterator te = teams.end();
 	TeamsMap::iterator artefactOfTeam = std::find_if(teams.begin(), te,
@@ -1989,7 +1989,7 @@ void game_sv_CaptureTheArtefact::OnDetachItem(CSE_ActorMP* actor, CSE_Abstract* 
 	if (item->m_tClassID == CLSID_OBJECT_PLAYERS_BAG)
 	{
 		//move all items from player to rukzak
-		xr_vector<u16>::const_iterator it_e = actor->children.end();
+		xr_vector<u32>::const_iterator it_e = actor->children.end();
 
 		xr_vector<CSE_Abstract*> to_transfer;
 		xr_vector<CSE_Abstract*> to_destroy;
@@ -1997,7 +1997,7 @@ void game_sv_CaptureTheArtefact::OnDetachItem(CSE_ActorMP* actor, CSE_Abstract* 
 		// may be there is a sense to move next invokation into the ProcessDeath method...
 		FillDeathActorRejectItems(actor, to_reject);
 
-		for (xr_vector<u16>::const_iterator it = actor->children.begin();
+		for (xr_vector<u32>::const_iterator it = actor->children.begin();
 		     it != it_e; ++it)
 		{
 			u16 ItemID = *it;
@@ -2522,12 +2522,12 @@ BOOL game_sv_CaptureTheArtefact::OnPreCreate(CSE_Abstract* E)
 	return inherited::OnPreCreate(E);
 }
 
-void game_sv_CaptureTheArtefact::OnCreate(u16 eid_who)
+void game_sv_CaptureTheArtefact::OnCreate(u32 eid_who)
 {
 	inherited::OnCreate(eid_who);
 }
 
-void game_sv_CaptureTheArtefact::OnDestroyObject(u16 eid_who)
+void game_sv_CaptureTheArtefact::OnDestroyObject(u32 eid_who)
 {
 	if (eid_who == m_dwSM_CurViewEntity && m_bSpectatorMode)
 	{
@@ -2537,7 +2537,7 @@ void game_sv_CaptureTheArtefact::OnDestroyObject(u16 eid_who)
 	m_item_respawner.check_to_delete(eid_who);
 }
 
-void game_sv_CaptureTheArtefact::OnPostCreate(u16 id_who)
+void game_sv_CaptureTheArtefact::OnPostCreate(u32 id_who)
 {
 	inherited::OnPostCreate(id_who);
 	CSE_Abstract* entity = get_entity_from_eid(id_who);

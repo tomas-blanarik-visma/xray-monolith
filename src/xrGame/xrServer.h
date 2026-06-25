@@ -91,7 +91,7 @@ class xrServer : public IPureServer
 private:
 	xrS_entities entities;
 	xr_multiset<svs_respawn> q_respawn;
-	xr_vector<u16> conn_spawned_ids;
+	xr_vector<u32> conn_spawned_ids;
 	cheaters_t m_cheaters;
 
 	file_transfer::server_site* m_file_transfers;
@@ -143,15 +143,15 @@ private:
 private:
 	typedef
 	CID_Generator<
-		u32, // time identifier type
-		u8, // compressed id type 
-		u16, // id type
-		u8, // block id type
-		u16, // chunk id type
-		0, // min value
-		u16(-2), // max value
-		256, // block size
-		u16(-1) // invalid id
+		u64, // time id
+		u32, // id type
+		u32, // VALUE_ID
+		u32, // BLOCK_ID
+		u32, // CHUNK_ID
+		0,
+		u32(-2), // max value
+		256,
+		u32(-1) // invalid id
 	> id_generator_type;
 
 private:
@@ -174,12 +174,12 @@ public:
 		m_tID_Generator = id_generator_type();
 	}
 
-	IC u16 PerformIDgen(u16 ID)
+	IC u32 PerformIDgen(u32 ID)
 	{
 		return (m_tID_Generator.tfGetID(ID));
 	}
 
-	IC void FreeID(u16 ID, u32 time)
+	IC void FreeID(u32 ID, u32 time)
 	{
 		return (m_tID_Generator.vfFreeID(ID, time));
 	}
@@ -194,12 +194,12 @@ public:
 	void Process_update(NET_Packet& P, ClientID sender);
 	void Process_save(NET_Packet& P, ClientID sender);
 	void Process_event(NET_Packet& P, ClientID sender);
-	void Process_event_ownership(NET_Packet& P, ClientID sender, u32 time, u16 ID, BOOL bForced = FALSE);
-	bool Process_event_reject(NET_Packet& P, const ClientID sender, const u32 time, const u16 id_parent,
-	                          const u16 id_entity, bool send_message = true);
-	void Process_event_destroy(NET_Packet& P, ClientID sender, u32 time, u16 ID, NET_Packet* pEPack);
-	void Process_event_activate(NET_Packet& P, const ClientID sender, const u32 time, const u16 id_parent,
-	                            const u16 id_entity, bool send_message = true);
+	void Process_event_ownership(NET_Packet& P, ClientID sender, u32 time, u32 ID, BOOL bForced = FALSE);
+	bool Process_event_reject(NET_Packet& P, const ClientID sender, const u32 time, const u32 id_parent,
+	                          const u32 id_entity, bool send_message = true);
+	void Process_event_destroy(NET_Packet& P, ClientID sender, u32 time, u32 ID, NET_Packet* pEPack);
+	void Process_event_activate(NET_Packet& P, const ClientID sender, const u32 time, const u32 id_parent,
+	                            const u32 id_entity, bool send_message = true);
 
 	xrClientData* SelectBestClientToMigrateTo(CSE_Abstract* E, BOOL bForceAnother = FALSE);
 	void SendConnectResult(IClient* CL, u8 res, u8 res1, char* ResultStr);
@@ -267,7 +267,7 @@ public:
 		return (xrClientData*)(IPureServer::ID_to_client(ID, ScanAll));
 	}
 
-	CSE_Abstract* ID_to_entity(u16 ID);
+	CSE_Abstract* ID_to_entity(u32 ID);
 
 	// main
 	virtual EConnect Connect(shared_str& session_name, GameDescriptionData& game_descr);

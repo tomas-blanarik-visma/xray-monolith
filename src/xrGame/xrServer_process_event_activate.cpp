@@ -2,7 +2,7 @@
 #include "xrserver.h"
 #include "xrserver_objects.h"
 
-void xrServer::Process_event_activate(NET_Packet& P, const ClientID sender, const u32 time, const u16 id_parent,
+void xrServer::Process_event_activate(NET_Packet& P, const ClientID sender, const u32 time, const u32 id_parent,
                                       const u16 id_entity, bool send_message)
 {
 	// Parse message
@@ -24,7 +24,7 @@ void xrServer::Process_event_activate(NET_Packet& P, const ClientID sender, cons
 		return;
 
 
-	if (0xffff == e_entity->ID_Parent)
+	if (u32(-1) == e_entity->ID_Parent)
 	{
 #ifndef MASTER_GOLD
 		Msg	("~ ERROR: can't activate independant object. entity[%s:%d], parent[%s:%d], section[%s]",

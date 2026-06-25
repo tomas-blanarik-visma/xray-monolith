@@ -18,7 +18,7 @@ class CAgentExplosiveManager
 {
 public:
 	typedef xr_vector<CDangerExplosive> EXPLOSIVES;
-	typedef xr_vector<u16> TO_BE_DESTROYED;
+	typedef xr_vector<u32> TO_BE_DESTROYED;
 
 private:
 	CAgentManager* m_object;

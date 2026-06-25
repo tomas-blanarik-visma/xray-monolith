@@ -777,7 +777,7 @@ void game_cl_ArtefactHunt::OnSellItemsFromRuck()
 	for (; IRuck != ERuck; ++IRuck)
 	{
 		PIItem pItem = *IRuck;
-		P.w_u16(pItem->object().ID());
+		P.w_u32(pItem->object().ID());
 	};
 	pCurActor->u_EventSend(P);
 };

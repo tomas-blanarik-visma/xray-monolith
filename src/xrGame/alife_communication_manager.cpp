@@ -216,7 +216,7 @@ void CALifeCommunicationManager::vfRestoreItems(CSE_ALifeHumanAbstract *tpALifeH
 #endif
 		for ( ; I != E; ++I) {
 #ifndef FAST_OWNERSHIP
-			(*I)->base()->ID_Parent = 0xffff;
+			(*I)->base()->ID_Parent = 0xffffffff;
 			graph().attach(*tpALifeHumanAbstract,*I,smart_cast<CSE_ALifeDynamicObject*>(*I)->m_tGraphID);
 #else
 			*i = (*I)->base()->ID;
@@ -241,7 +241,7 @@ void CALifeCommunicationManager::vfAttachGatheredItems(CSE_ALifeTraderAbstract *
 	for ( ; I != E; ++I) {
 #ifndef FAST_OWNERSHIP
 		CSE_ALifeDynamicObject	*l_tpALifeDynamicObject = objects().object(*I);
-		l_tpALifeDynamicObject->ID_Parent = 0xffff;
+		l_tpALifeDynamicObject->ID_Parent = 0xffffffff;
 		graph().attach	(*tpALifeTraderAbstract1->base(),smart_cast<CSE_ALifeInventoryItem*>(l_tpALifeDynamicObject),l_tpALifeDynamicObject->m_tGraphID);
 #else
 		CSE_ALifeInventoryItem	*l_tpALifeInventoryItem = smart_cast<CSE_ALifeInventoryItem*>(objects().object(*I));

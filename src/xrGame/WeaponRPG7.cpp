@@ -155,7 +155,7 @@ void CWeaponRPG7::switch2_Fire()
 		{
 			NET_Packet P;
 			u_EventGen(P, GE_LAUNCH_ROCKET, ID());
-			P.w_u16(u16(getCurrentRocket()->ID()));
+			P.w_u32(getCurrentRocket()->ID());
 			u_EventSend(P);
 		}
 	}

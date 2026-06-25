@@ -1036,8 +1036,8 @@ CScriptGameObject* CScriptGameObject::GetObjectByName(LPCSTR caObjectName) const
 	}
 	else if (inventory_box)
 	{
-		xr_vector<u16>::const_iterator I = inventory_box->m_items.begin();
-		xr_vector<u16>::const_iterator E = inventory_box->m_items.end();
+		xr_vector<u32>::const_iterator I = inventory_box->m_items.begin();
+		xr_vector<u32>::const_iterator E = inventory_box->m_items.end();
 		for (; I != E; ++I)
 		{
 			CGameObject* GO = smart_cast<CGameObject*>(Level().Objects.net_Find(*I));
@@ -1090,8 +1090,8 @@ CScriptGameObject* CScriptGameObject::GetObjectById(u16 id) const
 	}
 	else if (inventory_box)
 	{
-		xr_vector<u16>::const_iterator I = inventory_box->m_items.begin();
-		xr_vector<u16>::const_iterator E = inventory_box->m_items.end();
+		xr_vector<u32>::const_iterator I = inventory_box->m_items.begin();
+		xr_vector<u32>::const_iterator E = inventory_box->m_items.end();
 		for (; I != E; ++I)
 		{
 			if (*I == id)

@@ -897,7 +897,7 @@ bool game_sv_Deathmatch::IsBuyableItem(LPCSTR ItemName)
 };
 
 void game_sv_Deathmatch::CheckItem(game_PlayerState* ps, PIItem pItem, xr_vector<s16>* pItemsDesired,
-                                   xr_vector<u16>* pItemsToDelete, bool ExactMatch = false)
+                                   xr_vector<u32>* pItemsToDelete, bool ExactMatch = false)
 {
 	if (!pItem || !pItemsDesired || !pItemsToDelete) return;
 
@@ -1018,7 +1018,7 @@ void game_sv_Deathmatch::OnPlayerBuyFinished(ClientID id_who, NET_Packet& P)
 	if (pActor)
 	{
 		PIItem pItem = NULL;
-		xr_vector<u16>				ItemsToDelete;
+		xr_vector<u32>				ItemsToDelete;
 
 		bool ExactMatch	= true;
 		//проверяем пояс
@@ -1052,8 +1052,8 @@ void game_sv_Deathmatch::OnPlayerBuyFinished(ClientID id_who, NET_Packet& P)
 			CheckItem(ps, pItem, &ItemsDesired, &ItemsToDelete, ExactMatch);
 		};
 		
-		xr_vector<u16>::iterator	IDI = ItemsToDelete.begin();
-		xr_vector<u16>::iterator	EDI = ItemsToDelete.end();
+		xr_vector<u32>::iterator	IDI = ItemsToDelete.begin();
+		xr_vector<u32>::iterator	EDI = ItemsToDelete.end();
 		for ( ; IDI != EDI; ++IDI) 
 		{
 			NET_Packet			P;
@@ -1144,7 +1144,7 @@ void game_sv_Deathmatch::LoadDefItemsForTeam(const shared_str& caSection, DEF_IT
 	for (u32 i = 0; i < count; ++i)
 	{
 		_GetItem(DefItems, i, ItemName);
-		pDefItems->push_back(u16(m_strWeaponsData->GetItemIdx(ItemName) & 0xffff));
+		pDefItems->push_back(u16(m_strWeaponsData->GetItemIdx(ItemName) & 0xffffffff));
 	};
 };
 
@@ -1310,7 +1310,7 @@ void game_sv_Deathmatch::LoadTeamData(const shared_str& caSection)
 	TeamList.push_back(NewTeam);
 };
 
-void game_sv_Deathmatch::OnDestroyObject(u16 eid_who)
+void game_sv_Deathmatch::OnDestroyObject(u32 eid_who)
 {
 	if (eid_who == m_dwSM_CurViewEntity && m_bSpectatorMode)
 	{
@@ -1607,7 +1607,7 @@ void game_sv_Deathmatch::StartAnomalies(int AnomalySet)
 #endif
 };
 
-BOOL game_sv_Deathmatch::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
+BOOL game_sv_Deathmatch::OnTouch(u32 eid_who, u16 eid_what, BOOL bForced)
 {
 	CSE_Abstract* e_who = m_server->ID_to_entity(eid_who);
 	VERIFY(e_who);
@@ -1622,7 +1622,7 @@ BOOL game_sv_Deathmatch::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
 		if (W)
 		{
 			// Weapon
-			xr_vector<u16>& C = A->children;
+			xr_vector<u32>& C = A->children;
 			u8 slot = W->get_slot();
 			for (u32 it = 0; it < C.size(); ++it)
 			{
@@ -1678,7 +1678,7 @@ BOOL game_sv_Deathmatch::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
 		//---------------------------------------------------------------
 		if (e_what->m_tClassID == CLSID_OBJECT_PLAYERS_BAG)
 		{
-			if (e_what->ID_Parent == 0xffff)
+			if (e_what->ID_Parent == 0xffffffff)
 			{
 				//-------------------------------
 				//move all items from rukzak to player
@@ -1742,7 +1742,7 @@ BOOL game_sv_Deathmatch::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
 	return FALSE;
 }
 
-void game_sv_Deathmatch::OnDetach(u16 eid_who, u16 eid_what)
+void game_sv_Deathmatch::OnDetach(u32 eid_who, u16 eid_what)
 {
 	CSE_Abstract* e_parent = get_entity_from_eid(eid_who);
 	CSE_Abstract* e_entity = get_entity_from_eid(eid_what);
@@ -1751,8 +1751,8 @@ void game_sv_Deathmatch::OnDetach(u16 eid_who, u16 eid_what)
 	if (e_entity->m_tClassID == CLSID_OBJECT_PLAYERS_BAG && actor)
 	{
 		//move all items from player to rukzak
-		xr_vector<u16>::const_iterator it = e_parent->children.begin();
-		xr_vector<u16>::const_iterator it_e = e_parent->children.end();
+		xr_vector<u32>::const_iterator it = e_parent->children.begin();
+		xr_vector<u32>::const_iterator it_e = e_parent->children.end();
 		xr_vector<CSE_Abstract*> to_transfer;
 		xr_vector<CSE_Abstract*> to_destroy;
 		xr_vector<CSE_Abstract*> to_reject;
@@ -2021,7 +2021,7 @@ BOOL game_sv_Deathmatch::Is_Anomaly_InLists(CSE_Abstract* E)
 	/*CSE_ALifeCustomZone* pCustomZone	=	smart_cast<CSE_ALifeCustomZone*> (E);
 	if (pCustomZone)
 	{
-		if (pCustomZone->m_owner_id != 0xffffffff) return TRUE;
+		if (pCustomZone->m_owner_id != 0xffffffffffff) return TRUE;
 	}
 	
 	ANOMALIES_it It = std::find(m_AnomaliesPermanent.begin(), m_AnomaliesPermanent.end(),E->name_replace());
@@ -2056,12 +2056,12 @@ BOOL game_sv_Deathmatch::OnPreCreate(CSE_Abstract* E)
 	return TRUE;
 };
 
-void game_sv_Deathmatch::OnCreate(u16 eid_who)
+void game_sv_Deathmatch::OnCreate(u32 eid_who)
 {
 	inherited::OnCreate(eid_who);
 };
 
-void game_sv_Deathmatch::OnPostCreate(u16 eid_who)
+void game_sv_Deathmatch::OnPostCreate(u32 eid_who)
 {
 	inherited::OnPostCreate(eid_who);
 

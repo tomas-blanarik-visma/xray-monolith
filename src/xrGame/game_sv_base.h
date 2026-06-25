@@ -143,7 +143,7 @@ public:
 	//virtual		LPCSTR				get_name_it				(u32 it);
 	virtual LPCSTR get_name_id(ClientID id);
 	LPCSTR get_player_name_id(ClientID id);
-	virtual u16 get_id_2_eid(ClientID id);
+	virtual u32 get_id_2_eid(ClientID id);
 	//virtual		ClientID			get_it_2_id				(u32 it);*/
 	virtual u32 get_players_count();
 	CSE_Abstract* get_entity_from_eid(u16 id);
@@ -168,25 +168,25 @@ public:
 	s32 get_option_i(LPCSTR lst, LPCSTR name, s32 def = 0);
 	string64& get_option_s(LPCSTR lst, LPCSTR name, LPCSTR def = 0);
 	virtual u32 get_alive_count(u32 team);
-	virtual xr_vector<u16>* get_children(ClientID id_who);
-	void u_EventGen(NET_Packet& P, u16 type, u16 dest);
+	virtual xr_vector<u32>* get_children(ClientID id_who);
+	void u_EventGen(NET_Packet& P, u16 type, u32 dest);
 	void u_EventSend(NET_Packet& P, u32 dwFlags = DPNSEND_GUARANTEED);
 
 	// Events
 	virtual BOOL OnPreCreate(CSE_Abstract* E) { return TRUE; };
 
-	virtual void OnCreate(u16 id_who)
+	virtual void OnCreate(u32 id_who)
 	{
 	};
 
-	virtual void OnPostCreate(u16 id_who)
+	virtual void OnPostCreate(u32 id_who)
 	{
 	};
-	virtual BOOL OnTouch(u16 eid_who, u16 eid_target, BOOL bForced = FALSE) = 0; // TRUE=allow ownership, FALSE=denied
-	virtual void OnDetach(u16 eid_who, u16 eid_target) = 0;
-	virtual BOOL OnActivate(u16 eid_who, u16 eid_target) { return TRUE; };
+	virtual BOOL OnTouch(u32 eid_who, u32 eid_target, BOOL bForced = FALSE) = 0; // TRUE=allow ownership, FALSE=denied
+	virtual void OnDetach(u32 eid_who, u32 eid_target) = 0;
+	virtual BOOL OnActivate(u32 eid_who, u32 eid_target) { return TRUE; };
 
-	virtual void OnDestroyObject(u16 eid_who);
+	virtual void OnDestroyObject(u32 eid_who);
 
 	virtual void OnHit(u16 id_hitter, u16 id_hitted, NET_Packet& P); //кто-то получил Hit
 	virtual void OnPlayerHitPlayer(u16 id_hitter, u16 id_hitted, NET_Packet& P)
@@ -210,7 +210,7 @@ public:
 	void AddDelayedEvent(NET_Packet& tNetPacket, u16 type, u32 time, ClientID sender);
 	void ProcessDelayedEvent();
 	//this method will delete all events for entity that already not exist (in case when player was kicked)
-	void CleanDelayedEventFor(u16 id_entity_victim);
+	void CleanDelayedEventFor(u32 id_entity_victim);
 	void CleanDelayedEventFor(ClientID const& clientId);
 	void CleanDelayedEvents();
 

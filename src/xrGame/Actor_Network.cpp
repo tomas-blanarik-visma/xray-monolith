@@ -568,7 +568,7 @@ BOOL CActor::net_Spawn(CSE_Abstract* DC)
 
 	//set_state_box( mstate_real );
 	//character_physics_support()->movement()->ActivateBox	(0);
-	if (E->m_holderID != u16(-1))
+	if (E->m_holderID != ALife::_OBJECT_ID(-1))
 	{
 		character_physics_support()->movement()->DestroyCharacter();
 	}
@@ -644,7 +644,7 @@ BOOL CActor::net_Spawn(CSE_Abstract* DC)
 				pStatGraph->SetRect(0, g_Y, Device.dwWidth, 100, 0xff000000, 0xff000000);
 				g_Y += 110;
 				if (g_Y > 700) g_Y = 100;
-				pStatGraph->SetGrid(0, 0.0f, 10, 1.0f, 0xff808080, 0xffffffff);
+				pStatGraph->SetGrid(0, 0.0f, 10, 1.0f, 0xff808080, 0xffffffffffff);
 				pStatGraph->SetMinMax(0, 10, 300);
 				pStatGraph->SetStyle(CStatGraph::stBar);
 				pStatGraph->AppendSubGraph(CStatGraph::stCurve);
@@ -684,8 +684,8 @@ BOOL CActor::net_Spawn(CSE_Abstract* DC)
 			Level().client_spawn_manager().add(E->m_holderID, ID(), callback);
 	//F
 	//-------------------------------------------------------------
-	m_iLastHitterID = u16(-1);
-	m_iLastHittingWeaponID = u16(-1);
+	m_iLastHitterID = u32(-1);
+	m_iLastHittingWeaponID = u32(-1);
 	m_s16LastHittedElement = -1;
 	m_bWasHitted = false;
 	m_dwILastUpdateTime = 0;
@@ -755,7 +755,7 @@ void CActor::net_Destroy()
 
 	processing_deactivate();
 	m_holder = NULL;
-	m_holderID = u16(-1);
+	m_holderID = ALife::_OBJECT_ID(-1);
 
 	SetDefaultVisualOutfit(NULL);
 
@@ -1782,12 +1782,12 @@ void CActor::net_Save(NET_Packet& P)
 
 	pos					= P.w_tell();
 	m_pPhysics_support->in_NetSave(P);
-	P.w_u16(m_holderID);
+	P.w_u32(m_holderID);
 	Msg					("m_pPhysics_support->in_NetSave() : %d",P.w_tell() - pos);
 #else
 	inherited::net_Save(P);
 	m_pPhysics_support->in_NetSave(P);
-	P.w_u16(m_holderID);
+	P.w_u32(m_holderID);
 #endif
 }
 
@@ -1799,8 +1799,8 @@ BOOL CActor::net_SaveRelevant()
 
 void CActor::SetHitInfo(CObject* who, CObject* weapon, s16 element, Fvector Pos, Fvector Dir)
 {
-	m_iLastHitterID = (who != NULL) ? who->ID() : u16(-1);
-	m_iLastHittingWeaponID = (weapon != NULL) ? weapon->ID() : u16(-1);
+	m_iLastHitterID = (who != NULL) ? who->ID() : u32(-1);
+	m_iLastHittingWeaponID = (weapon != NULL) ? weapon->ID() : u32(-1);
 	m_s16LastHittedElement = element;
 	m_fLastHealth = GetfHealth();
 	m_bWasHitted = true;
@@ -1815,7 +1815,7 @@ void CActor::OnHitHealthLoss(float NewHealth)
 	float fNewHealth = NewHealth;
 	m_bWasHitted = false;
 
-	if (m_iLastHitterID != u16(-1))
+	if (m_iLastHitterID != u32(-1))
 	{
 #ifndef MASTER_GOLD
 		Msg("On hit health loss of actor[%d], last hitter[%d]", ID(), m_iLastHitterID);
@@ -1823,8 +1823,8 @@ void CActor::OnHitHealthLoss(float NewHealth)
 		NET_Packet P;
 		u_EventGen(P, GE_GAME_EVENT, ID());
 		P.w_u16(GAME_EVENT_PLAYER_HITTED);
-		P.w_u16(u16(ID() & 0xffff));
-		P.w_u16(u16(m_iLastHitterID & 0xffff));
+		P.w_u32(ID() & 0xffffffff);
+		P.w_u16(u16(m_iLastHitterID & 0xffffffff));
 		P.w_float(m_fLastHealth - fNewHealth);
 		u_EventSend(P);
 	}
@@ -1845,7 +1845,7 @@ void CActor::OnCriticalHitHealthLoss()
 		((pLastHittingWeapon && pLastHittingWeapon != pLastHitter) ? *(pLastHittingWeapon->cName()) : ""));
 #endif
 	//-------------------------------------------------------------------
-	if (m_iLastHitterID != u16(-1))
+	if (m_iLastHitterID != u32(-1))
 	{
 #ifndef MASTER_GOLD
 		Msg("On hit of actor[%d], last hitter[%d]", ID(), m_iLastHitterID);
@@ -1853,8 +1853,8 @@ void CActor::OnCriticalHitHealthLoss()
 		NET_Packet P;
 		u_EventGen(P, GE_GAME_EVENT, ID());
 		P.w_u16(GAME_EVENT_PLAYER_HITTED);
-		P.w_u16(u16(ID() & 0xffff));
-		P.w_u16(u16(m_iLastHitterID & 0xffff));
+		P.w_u32(ID() & 0xffffffff);
+		P.w_u16(u16(m_iLastHitterID & 0xffffffff));
 		P.w_float(m_fLastHealth);
 		u_EventSend(P);
 	}
@@ -1909,11 +1909,11 @@ void CActor::OnCriticalHitHealthLoss()
 	NET_Packet P;
 	u_EventGen(P, GE_GAME_EVENT, ID());
 	P.w_u16(GAME_EVENT_PLAYER_KILLED);
-	P.w_u16(u16(ID() & 0xffff));
+	P.w_u32(ID() & 0xffffffff);
 	P.w_u8(KT_HIT);
-	P.w_u16((m_iLastHitterID) ? u16(m_iLastHitterID & 0xffff) : 0);
+	P.w_u16((m_iLastHitterID) ? u16(m_iLastHitterID & 0xffffffff) : 0);
 	P.w_u16((m_iLastHittingWeaponID && m_iLastHitterID != m_iLastHittingWeaponID)
-		        ? u16(m_iLastHittingWeaponID & 0xffff)
+		        ? u16(m_iLastHittingWeaponID & 0xffffffff)
 		        : 0);
 	P.w_u8(u8(SpecialHit));
 	u_EventSend(P);
@@ -1952,11 +1952,11 @@ void CActor::OnCriticalWoundHealthLoss()
 	NET_Packet P;
 	u_EventGen(P, GE_GAME_EVENT, ID());
 	P.w_u16(GAME_EVENT_PLAYER_KILLED);
-	P.w_u16(u16(ID() & 0xffff));
+	P.w_u32(ID() & 0xffffffff);
 	P.w_u8(KT_BLEEDING);
-	P.w_u16((m_iLastHitterID) ? u16(m_iLastHitterID & 0xffff) : 0);
+	P.w_u16((m_iLastHitterID) ? u16(m_iLastHitterID & 0xffffffff) : 0);
 	P.w_u16((m_iLastHittingWeaponID && m_iLastHitterID != m_iLastHittingWeaponID)
-		        ? u16(m_iLastHittingWeaponID & 0xffff)
+		        ? u16(m_iLastHittingWeaponID & 0xffffffff)
 		        : 0);
 	P.w_u8(SKT_NONE);
 	u_EventSend(P);
@@ -1970,7 +1970,7 @@ void CActor::OnCriticalRadiationHealthLoss()
 	NET_Packet P;
 	u_EventGen(P, GE_GAME_EVENT, ID());
 	P.w_u16(GAME_EVENT_PLAYER_KILLED);
-	P.w_u16(u16(ID() & 0xffff));
+	P.w_u32(ID() & 0xffffffff);
 	P.w_u8(KT_RADIATION);
 	P.w_u16(0);
 	P.w_u16(0);

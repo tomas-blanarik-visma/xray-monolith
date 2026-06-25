@@ -2,7 +2,7 @@
 #include "xrserver.h"
 #include "xrserver_objects.h"
 
-bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const u32 time, const u16 id_parent,
+bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const u32 time, const u32 id_parent,
                                     const u16 id_entity, bool send_message)
 {
 	// Parse message
@@ -35,12 +35,12 @@ bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const 
 	Msg ( "--- SV: Process reject: parent[%d][%s], item[%d][%s]", id_parent, e_parent->name_replace(), id_entity, e_entity->name());
 #endif // MP_LOGGING
 
-	xr_vector<u16>& C = e_parent->children;
-	xr_vector<u16>::iterator c = std::find(C.begin(), C.end(), id_entity);
+	xr_vector<u32>& C = e_parent->children;
+	xr_vector<u32>::iterator c = std::find(C.begin(), C.end(), id_entity);
 	if (c == C.end())
 	{
 		xr_string clildrenList;
-		for (const u16& childID : e_parent->children)
+		for (const u32& childID : e_parent->children)
 		{
 			clildrenList.append("! ").append(game->get_entity_from_eid(childID)->name_replace()).append("\n");
 		}
@@ -49,7 +49,7 @@ bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const 
 		return false;
 	}
 
-	if (0xffff == e_entity->ID_Parent)
+	if (u32(-1) == e_entity->ID_Parent)
 	{
 #ifndef MASTER_GOLD
 		Msg	("! ERROR: can't detach independant object. entity[%s][%d], parent[%s][%d], section[%s]",
@@ -72,7 +72,7 @@ bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const 
 	game->OnDetach(id_parent, id_entity);
 
 	//R_ASSERT3(C.end()!=c,e_entity->name_replace(),e_parent->name_replace());
-	e_entity->ID_Parent = 0xffff;
+	e_entity->ID_Parent = u32(-1);
 	C.erase(c);
 
 	// Signal to everyone (including sender)

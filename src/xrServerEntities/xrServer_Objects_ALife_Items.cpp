@@ -116,7 +116,7 @@ const u32 CSE_ALifeInventoryItem::random_limit = 120;
 //if TRUE, then object sends update packet
 BOOL CSE_ALifeInventoryItem::Net_Relevant()
 {
-	if (base()->ID_Parent != u16(-1))
+	if (base()->ID_Parent != u32(-1))
 		return FALSE;
 
 	if (!freezed)
@@ -987,7 +987,7 @@ void CSE_ALifeItemArtefact::FillProps		(LPCSTR pref, PropItemVec& items)
 
 BOOL CSE_ALifeItemArtefact::Net_Relevant()
 {
-	if (base()->ID_Parent == u16(-1))
+	if (base()->ID_Parent == u32(-1))
 		return TRUE;
 
 	return FALSE;

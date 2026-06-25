@@ -493,7 +493,7 @@ void CWeaponMagazinedWGrenade::LaunchGrenade()
 
 			NET_Packet P;
 			u_EventGen(P, GE_LAUNCH_ROCKET, ID());
-			P.w_u16(getCurrentRocket()->ID());
+			P.w_u32(getCurrentRocket()->ID());
 			u_EventSend(P);
 		};
 	}
@@ -1307,7 +1307,7 @@ void CWeaponMagazinedWGrenade::UnloadRocket()
 	{
 		NET_Packet P;
 		u_EventGen(P, GE_OWNERSHIP_REJECT, ID());
-		P.w_u16(u16(getCurrentRocket()->ID()));
+		P.w_u32(getCurrentRocket()->ID());
 		u_EventSend(P);
         dropCurrentRocket();
 	}

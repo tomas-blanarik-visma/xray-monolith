@@ -194,7 +194,7 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC)
 	LoadLightParams();
 
 	Switch(torch->m_active);
-	VERIFY(!torch->m_active || (torch->ID_Parent != 0xffff));
+	VERIFY(!torch->m_active || (torch->ID_Parent != u32(-1)));
 
 	return (TRUE);
 }

@@ -285,7 +285,7 @@ void CHitMemoryManager::save(NET_Packet& packet) const
 	for (; I != E; ++I)
 	{
 		VERIFY((*I).m_object);
-		packet.w_u16((*I).m_object->ID());
+		packet.w_u32((*I).m_object->ID());
 		// object params
 		packet.w_u32((*I).m_object_params.m_level_vertex_id);
 		packet.w_vec3((*I).m_object_params.m_position);
