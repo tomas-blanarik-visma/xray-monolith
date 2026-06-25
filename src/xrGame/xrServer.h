@@ -144,14 +144,14 @@ private:
 	typedef
 	CID_Generator<
 		u64, // time id
-		u32, // id type
-		u32, // VALUE_ID
-		u32, // BLOCK_ID
-		u32, // CHUNK_ID
+		u16, // id type
+		u16, // VALUE_ID
+		u16, // BLOCK_ID
+		u16, // CHUNK_ID
 		0,
-		u32(-2), // max value
+		u16(-2), // max value
 		256,
-		u32(-1) // invalid id
+		u16(-1) // invalid id
 	> id_generator_type;
 
 private:
