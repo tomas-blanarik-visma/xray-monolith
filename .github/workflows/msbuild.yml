@@ -10,6 +10,7 @@ on:
     branches: [ "all-in-one-vs2022-wpo" ]
   pull_request:
     branches: [ "all-in-one-vs2022-wpo" ]
+  workflow_dispatch:
 
 permissions: write-all
 
