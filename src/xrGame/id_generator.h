@@ -39,27 +39,50 @@ private:
 	};
 
 private:
-	enum
-	{
-		m_tBlockCount = u32(tMaxValue - tMinValue) / tBlockSize + 1,
-	};
-
-private:
 	u32 m_available_count;
-	SID_Block m_tppBlocks [m_tBlockCount];
+	VALUE_ID m_tNextValue;
+	bool m_has_unassigned_ids;
+	xr_hash_map<BLOCK_ID, SID_Block> m_tppBlocks;
+	xr_unordered_set<VALUE_ID> m_tReservedIDs;
 
 private:
 	IC BLOCK_ID tfGetBlockByValue(VALUE_ID tValueID)
 	{
+		R_ASSERT2(tValueID >= tMinValue && tValueID <= tMaxValue, "Requesting ID is invalid!");
 		BLOCK_ID l_tBlockID = BLOCK_ID((tValueID - tMinValue) / tBlockSize);
-		R_ASSERT2(l_tBlockID < m_tBlockCount, "Requesting ID is invalid!");
 		return (l_tBlockID);
 	}
 
-	IC VALUE_ID tfGetFromBlock(SID_Block& l_tID_Block, VALUE_ID tValueID)
+	IC void tfAdvanceNextValue()
+	{
+		if (!m_has_unassigned_ids)
+			return;
+
+		if (m_tNextValue >= tMaxValue)
+		{
+			m_has_unassigned_ids = false;
+			return;
+		}
+
+		++m_tNextValue;
+	}
+
+	IC void tfSkipReservedIDs()
+	{
+		while (m_has_unassigned_ids)
+		{
+			auto I = m_tReservedIDs.find(m_tNextValue);
+			if (I == m_tReservedIDs.end())
+				return;
+
+			m_tReservedIDs.erase(I);
+			tfAdvanceNextValue();
+		}
+	}
+
+	IC VALUE_ID tfGetFromBlock(SID_Block& l_tID_Block, BLOCK_ID l_tBlockID, VALUE_ID tValueID)
 	{
 		VERIFY(l_tID_Block.m_tCount);
-		BLOCK_ID l_tBlockID = BLOCK_ID(&l_tID_Block - m_tppBlocks);
 
 		if (l_tID_Block.m_tCount == 1)
 		{
@@ -68,12 +91,20 @@ private:
 		}
 
 		if (tInvalidValueID == tValueID)
-			return (VALUE_ID(l_tID_Block.m_tpIDs[--l_tID_Block.m_tCount]) + l_tBlockID * tBlockSize + tMinValue);
+		{
+			const VALUE_ID l_tResult =
+			    VALUE_ID(l_tID_Block.m_tpIDs[--l_tID_Block.m_tCount]) + l_tBlockID * tBlockSize + tMinValue;
+			if (!l_tID_Block.m_tCount)
+				m_tppBlocks.erase(l_tBlockID);
+			return l_tResult;
+		}
 
 		TYPE_ID* l_tpBlockID = std::find(l_tID_Block.m_tpIDs, l_tID_Block.m_tpIDs + l_tID_Block.m_tCount,
 		                                 TYPE_ID((tValueID - tMinValue) % tBlockSize));
 		R_ASSERT2(l_tID_Block.m_tpIDs + l_tID_Block.m_tCount != l_tpBlockID, "Requesting ID has already been used!");
 		*l_tpBlockID = *(l_tID_Block.m_tpIDs + --l_tID_Block.m_tCount);
+		if (!l_tID_Block.m_tCount)
+			m_tppBlocks.erase(l_tBlockID);
 		return (tValueID);
 	}
 
@@ -81,26 +112,57 @@ public:
 	IC CID_Generator()
 	{
 		m_available_count = 0;
-		for (VALUE_ID i = tMinValue; ; ++i)
-		{
-			vfFreeID(i, tStartTime);
-			if (i >= tMaxValue)
-				break;
-		}
-		VERIFY(m_available_count == m_tBlockCount);
-		for (u32 j = 0; j < m_tBlockCount; ++j)
-			std::reverse(m_tppBlocks[j].m_tpIDs, m_tppBlocks[j].m_tpIDs + m_tppBlocks[j].m_tCount);
+		m_tNextValue = tMinValue;
+		m_has_unassigned_ids = true;
+		m_tppBlocks.clear();
+		m_tReservedIDs.clear();
 	}
 
 	IC VALUE_ID tfGetID(VALUE_ID tValueID = tInvalidValueID)
 	{
 		if (tInvalidValueID != tValueID)
-			return (tfGetFromBlock(m_tppBlocks[tfGetBlockByValue(tValueID)], tValueID));
+		{
+			BLOCK_ID l_tBlockID = tfGetBlockByValue(tValueID);
+			auto I = m_tppBlocks.find(l_tBlockID);
+			if (I != m_tppBlocks.end())
+				return (tfGetFromBlock(I->second, l_tBlockID, tValueID));
 
-		R_ASSERT2(m_available_count, "Not enough IDs");
-		SID_Block* I = std::min_element(m_tppBlocks, m_tppBlocks + m_tBlockCount);
-		VERIFY(I != m_tppBlocks + m_tBlockCount);
-		return (tfGetFromBlock(*I, tValueID));
+			if (m_has_unassigned_ids && tValueID >= m_tNextValue)
+			{
+				if (tValueID == m_tNextValue)
+				{
+					tfAdvanceNextValue();
+					tfSkipReservedIDs();
+					return tValueID;
+				}
+
+				auto inserted = m_tReservedIDs.insert(tValueID);
+				R_ASSERT2(inserted.second, "Requesting ID has already been used!");
+				return tValueID;
+			}
+
+			R_ASSERT2(false, "Requesting ID has already been used!");
+			return tInvalidValueID;
+		}
+
+		auto I = m_tppBlocks.end();
+		if (!m_tppBlocks.empty())
+		{
+			I = std::min_element(m_tppBlocks.begin(), m_tppBlocks.end(), [](const auto& left, const auto& right) {
+				return left.second < right.second;
+			});
+		}
+
+		if (m_has_unassigned_ids && (I == m_tppBlocks.end() || tStartTime <= I->second.m_tTimeID))
+		{
+			VALUE_ID l_tResult = m_tNextValue;
+			tfAdvanceNextValue();
+			tfSkipReservedIDs();
+			return l_tResult;
+		}
+
+		R_ASSERT2(I != m_tppBlocks.end(), "Not enough IDs");
+		return (tfGetFromBlock(I->second, I->first, tValueID));
 	}
 
 	IC void vfFreeID(VALUE_ID tValueID, TIME_ID tTimeID)
@@ -120,6 +182,11 @@ public:
 		TYPE_ID					*l_tpBlockID = std::find(l_tID_Block.m_tpIDs, l_tID_Block.m_tpIDs + l_tID_Block.m_tCount, TYPE_ID((tValueID - tMinValue)%tBlockSize));	
 		VERIFY					(l_tpBlockID == l_tID_Block.m_tpIDs + l_tID_Block.m_tCount);
 #endif
+		if (m_has_unassigned_ids && tValueID > m_tNextValue)
+		{
+			const size_t l_tErased = m_tReservedIDs.erase(tValueID);
+			VERIFY(l_tErased);
+		}
 		l_tID_Block.m_tpIDs[l_tID_Block.m_tCount++] = TYPE_ID((tValueID - tMinValue) % tBlockSize);
 		l_tID_Block.m_tTimeID = tTimeID;
 	}
