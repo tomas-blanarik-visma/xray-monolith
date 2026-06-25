@@ -81,7 +81,7 @@ void CLevel::ClientReceive()
 		m_dwRPS += P->B.count;
 		//-----------------------------------------------------
 		u16 m_type;
-		u16 ID;
+		u32 ID;
 		P->r_begin(m_type);
 		switch (m_type)
 		{
