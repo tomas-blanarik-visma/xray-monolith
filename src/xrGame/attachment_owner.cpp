@@ -134,7 +134,7 @@ void CAttachmentOwner::detach(CInventoryItem* inventory_item)
 
 bool CAttachmentOwner::attached(const CInventoryItem* inventory_item) const
 {
-	return (attachedItem(inventory_item->object().ID()) != NULL);
+	return (attachedItem((u16)inventory_item->object().ID()) != NULL);
 }
 
 bool CAttachmentOwner::attached(shared_str sect_name) const
